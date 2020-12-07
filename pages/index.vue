@@ -1,29 +1,41 @@
 <template>
-  <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">
-        GoodreadsNuxt
-      </h1>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
-    </div>
+  <div>
+    <b-card-group deck>
+      <b-card
+        border-variant="primary"
+        header="Books"
+        header-bg-variant="primary"
+        header-text-variant="white"
+        align="center"
+      >
+        <b-card-text>
+          <b-icon icon="book" />
+          10000
+        </b-card-text>
+      </b-card>
+      <b-card
+        border-variant="secondary"
+        header="Genres"
+        header-border-variant="info"
+        align="center"
+      >
+        <b-card-text>
+          <b-icon-bookmark-heart-fill />
+          100
+        </b-card-text>
+      </b-card>
+      <b-card
+        border-variant="danger"
+        header="User"
+        header-border-variant="danger"
+        header-text-variant="danger"
+        align="center"
+      >
+        <b-card-text>
+          <b-icon-emoji-laughing />1000
+        </b-card-text>
+      </b-card>
+    </b-card-group>
   </div>
 </template>
 
@@ -32,42 +44,13 @@ export default {}
 </script>
 
 <style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
 .title {
-  font-family:
-    'Quicksand',
-    'Source Sans Pro',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
+  font-family: "Quicksand", "Source Sans Pro", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   display: block;
   font-weight: 300;
   font-size: 100px;
   color: #35495e;
   letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
 }
 </style>

@@ -1,20 +1,34 @@
 <template>
   <div>
-    <Nuxt />
+    <TheNavBar />
+    <b-container class="mt-4" fluid>
+      <b-row class="p-2">
+        <b-col cols="2">
+          <TheSidePanel />
+        </b-col>
+        <b-col cols="10">
+          <Nuxt />
+        </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
+<script>
+import TheNavBar from '../components/TheNavBar'
+import TheSidePanel from '../components/TheSidePanel'
+
+export default {
+  components: {
+    TheNavBar,
+    TheSidePanel
+  }
+}
+</script>
 
 <style>
 html {
-  font-family:
-    'Source Sans Pro',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
+  font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
   word-spacing: 1px;
   -ms-text-size-adjust: 100%;
@@ -29,6 +43,10 @@ html {
 *::after {
   box-sizing: border-box;
   margin: 0;
+}
+* {
+  padding: 0px;
+  margin: 0px;
 }
 
 .button--green {
