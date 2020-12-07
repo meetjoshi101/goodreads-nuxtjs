@@ -1,14 +1,16 @@
 <template>
   <b-list-group>
     <NuxtLink to="/">
-      <b-list-group-item class="">
+      <b-list-group-item>
         Dashbord
       </b-list-group-item>
     </NuxtLink>
-    <b-list-group-item class="">
-      Books
-    </b-list-group-item>
 
+    <NuxtLink to="/books">
+      <b-list-group-item>
+        Books
+      </b-list-group-item>
+    </NuxtLink>
     <b-list-group-item class="">
       Genre
     </b-list-group-item>
@@ -20,11 +22,8 @@
 </template>
 
 <script>
-export default {
-
-}
+export default {}
 </script>
 
 <style>
-
 </style>
