@@ -1,14 +1,19 @@
 <template>
   <div>
     <b-modal
-      id="modal-prevent-closing"
+      id="modal-scrollable"
       ref="modal"
-      title="Submit Your Name"
+      title="Add Books"
+      scrollable
       @show="resetModal"
       @hidden="resetModal"
       @ok="handleOk"
     >
-      <form ref="form" @submit.stop.prevent="handleSubmit">
+      <form
+        ref="form"
+        title="Scrollable Content"
+        @submit.stop.prevent="handleSubmit"
+      >
         <b-form-group
           :state="isbnState"
           label="ISBN"
@@ -21,24 +26,82 @@
             :state="isbnState"
             required
           />
-          <b-form-group
+        </b-form-group>
+        <b-form-group
+          :state="titleState"
+          label="Title"
+          label-for="title-input"
+          invalid-feedback="Title is required"
+        >
+          <b-form-input
+            id="title-input"
+            v-model="title"
             :state="titleState"
-            label="Title"
-            label-for="title-input"
-            invalid-feedback="Title is required"
-          >
-            <b-form-input
-              id="title-input"
-              v-model="title"
-              :state="titleState"
-              required
-            />
-          </b-form-group>
+            required
+          />
+        </b-form-group>
+        <b-form-group
+          :state="descriptionState"
+          label="Description"
+          label-for="textarea"
+          invalid-feedback="Description is required"
+        >
+          <b-form-textarea
+            id="textarea"
+            v-model="description"
+            placeholder="Enter description of books..."
+            rows="3"
+            max-rows="6"
+            invalid-feedback="description is required"
+            :state="publicationYearState"
+            required
+          />
+        </b-form-group>
+        <b-form-group
+          :state="authorState"
+          label="Author"
+          label-for="author-input"
+          invalid-feedback="Author is required"
+        >
+          <b-form-input
+            id="author-input"
+            v-model="author"
+            :state="authorState"
+            required
+          />
+        </b-form-group>
+        <b-form-group
+          :state="publicationYearState"
+          label="Publication Year"
+          label-for="publicationYear-input"
+          invalid-feedback="publication Year is required"
+        >
+          <b-form-input
+            id="publicationYear-input"
+            v-model="publicationYear"
+            :state="publicationYearState"
+            type="number"
+            required
+          />
+        </b-form-group>
+        <b-form-group
+          :state="avgRatingState"
+          label="Average Rating"
+          label-for="avgRating-input"
+          invalid-feedback="Average Rating Year is required"
+        >
+          <b-form-input
+            id="avgRating-input"
+            v-model="avgRating"
+            :state="avgRatingState"
+            type="number"
+            required
+          />
         </b-form-group>
       </form>
     </b-modal>
     <div class="float-right mb-2">
-      <b-button v-b-modal.modal-prevent-closing size="lg" variant="info">
+      <b-button v-b-modal.modal-scrollable size="lg" variant="info">
         Add Book
       </b-button>
     </div>
@@ -60,6 +123,7 @@
 <script>
 /* eslint-disable no-labels */
 /* eslint-disable no-console */
+/* eslint-disable eqeqeq */
 export default {
   data () {
     return {
@@ -80,9 +144,17 @@ export default {
       ],
       isbnState: null,
       submittedIsbn: null,
-      isbn: null,
-      title: null,
-      titleState: null
+      isbn: '',
+      title: '',
+      titleState: null,
+      description: '',
+      descriptionState: null,
+      author: '',
+      authorState: null,
+      publicationYear: '',
+      publicationYearState: null,
+      avgRatingState: null,
+      avgRating: ''
     }
   },
   methods: {
@@ -93,14 +165,50 @@ export default {
     Delete (ISBN) {
       console.log(ISBN)
     },
+    addBook () {
+      console.log('add Books')
+    },
     checkFormValidity () {
-      const valid = this.$refs.form.checkValidity()
-      this.isbnState = valid
+      let valid = true
+      if (this.isbn == '') {
+        this.isbnState = false
+        valid = false
+      } else if (this.title == '') {
+        this.isbnState = true
+        this.titleState = false
+        valid = false
+      } else if (this.description == '') {
+        this.titleState = true
+        this.descriptionState = false
+        valid = false
+      } else if (this.author == '') {
+        this.descriptionState = true
+        this.authorState = false
+        valid = false
+      } else if (this.publicationYear == '') {
+        this.authorState = true
+        this.publicationYearState = false
+        valid = false
+      } else if (this.avgRating == '') {
+        this.avgRatingState = false
+        valid = false
+      } else {
+        this.publicationYearState = true
+        valid = true
+      }
       return valid
     },
     resetModal () {
       this.isbn = ''
       this.isbnState = null
+      this.title = ''
+      this.titleState = null
+      this.description = ''
+      this.descriptionState = null
+      this.author = ''
+      this.authorState = null
+      this.publicationYear = ''
+      this.publicationYearState = null
     },
     handleOk (bvModalEvt) {
       // Prevent modal from closing
@@ -114,11 +222,10 @@ export default {
         return
       }
       // Push the name to submitted names
-      this.submittedIsbn = this.isbn
-      console.log(this.submittedIsbn)
+      this.addBook()
       // Hide the modal manually
       this.$nextTick(() => {
-        this.$bvModal.hide('modal-prevent-closing')
+        this.$bvModal.hide('modal-scrollable')
       })
     }
   }
