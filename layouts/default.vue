@@ -60,10 +60,7 @@ a.nuxt-link-exact-active {
 a:hover{
   text-decoration: none;
   color: aquamarine;
-  font-size: 140%;
-}
-a{
-  color: yellow;
+  font-size: 120%;
 }
 
 </style>
