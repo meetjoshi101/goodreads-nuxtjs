@@ -22,8 +22,8 @@
         >
           <b-form-input
             id="email-input"
-            v-model="name"
-            :state="nameState"
+            v-model="email"
+            :state="emailState"
             required
           />
         </b-form-group>
@@ -59,7 +59,7 @@ export default {
       fields: ['Email'],
       items: [
         {
-          email: 'meet@gmail.com'
+          Email: 'meet@gmail.com'
         }
       ],
       emailState: null,

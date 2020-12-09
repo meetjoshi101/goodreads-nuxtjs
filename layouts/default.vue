@@ -56,8 +56,11 @@ a.nuxt-link-active {
 a.nuxt-link-exact-active {
   color: #00c58e;
 }
+
 a:hover{
   text-decoration: none;
+  color: aquamarine;
+  font-size: 140%;
 }
 a{
   color: yellow;
