@@ -125,6 +125,7 @@
 /* eslint-disable no-console */
 /* eslint-disable eqeqeq */
 export default {
+  layout: 'default',
   data () {
     return {
       fields: [

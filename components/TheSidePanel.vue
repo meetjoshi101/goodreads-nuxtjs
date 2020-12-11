@@ -1,27 +1,35 @@
 <template>
   <b-list-group>
-    <NuxtLink to="/">
+    <NuxtLink v-for="link in links" :key="link.slug" to="/">
       <b-list-group-item class="bg-dark">
-        Dashbord
-      </b-list-group-item>
-    </NuxtLink>
-
-    <NuxtLink to="/books">
-      <b-list-group-item class="bg-dark">
-        Books
-      </b-list-group-item>
-    </NuxtLink>
-
-    <NuxtLink to="/genres">
-      <b-list-group-item class="bg-dark">
-        Genre
-      </b-list-group-item>
-    </NuxtLink>
-
-    <NuxtLink to="/users">
-      <b-list-group-item class="bg-dark">
-        User
+        {{ link.name }}
       </b-list-group-item>
     </NuxtLink>
   </b-list-group>
 </template>
+<script>
+export default {
+  data () {
+    return {
+      links: [
+        {
+          slug: '/users',
+          name: 'User'
+        },
+        {
+          slug: '/genres',
+          name: 'Genre'
+        },
+        {
+          slug: '/books',
+          name: 'Books'
+        },
+        {
+          slug: '/',
+          name: 'Dashbord'
+        }
+      ]
+    }
+  }
+}
+</script>

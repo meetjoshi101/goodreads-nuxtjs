@@ -16,12 +16,14 @@
 <script>
 import TheNavBar from '../components/TheNavBar'
 import TheSidePanel from '../components/TheSidePanel'
+import RefreshStyles from '../middleware/Refreshstyle'
 
 export default {
   components: {
     TheNavBar,
     TheSidePanel
-  }
+  },
+  mixins: [RefreshStyles]
 }
 </script>
 
@@ -48,12 +50,12 @@ html {
   padding: 0px;
   margin: 0px;
 }
-a.nuxt-link-active {
+.nuxt-link-active {
   color: yellow;
   font-weight: bold;
 }
 /* exact link will show the primary color for only the exact matching link */
-a.nuxt-link-exact-active {
+.nuxt-link-exact-active {
   color: #00c58e;
 }
 
