@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <b-navbar toggleable="lg" type="dark" variant="info">
+      <b-navbar toggleable="lg" type="dark" variant="info" class="shadow rounded">
         <b-navbar-brand href="#">
           Good Reads
         </b-navbar-brand>
