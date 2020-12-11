@@ -55,9 +55,9 @@ html {
   font-weight: bold;
 }
 /* exact link will show the primary color for only the exact matching link */
-.nuxt-link-exact-active {
+/* .nuxt-link-exact-active {
   color: #00c58e;
-}
+} */
 
 a:hover{
   text-decoration: none;
