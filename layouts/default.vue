@@ -16,14 +16,12 @@
 <script>
 import TheNavBar from '../components/TheNavBar'
 import TheSidePanel from '../components/TheSidePanel'
-import RefreshStyles from '../middleware/Refreshstyle'
 
 export default {
   components: {
     TheNavBar,
     TheSidePanel
-  },
-  mixins: [RefreshStyles]
+  }
 }
 </script>
 

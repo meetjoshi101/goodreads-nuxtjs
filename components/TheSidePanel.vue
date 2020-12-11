@@ -1,9 +1,14 @@
 <template>
   <b-list-group>
-    <NuxtLink v-for="link in links" :key="link.slug" :to="link.slug">
-      <b-list-group-item class="bg-dark link-colour">
+    <NuxtLink
+      v-for="link in links"
+      :key="link.slug"
+      :to="link.slug"
+      class=" link-colour"
+    >
+      <div>
         {{ link.name }}
-      </b-list-group-item>
+      </div>
     </NuxtLink>
   </b-list-group>
 </template>
@@ -34,11 +39,13 @@ export default {
 }
 </script>
 <style scoped>
-a.nuxt-link-exact-active {
-  color: red;
-}
-.link-colour{
+.link-colour {
   color: #20ce88;
   font-weight: 200;
+}
+a.nuxt-link-exact-active {
+  color: #2ebdff;
+  font-weight: 200;
+  text-decoration: none;
 }
 </style>
