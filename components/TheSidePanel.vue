@@ -1,6 +1,6 @@
 <template>
   <b-list-group>
-    <NuxtLink v-for="link in links" :key="link.slug" to="/">
+    <NuxtLink v-for="link in links" :key="link.slug" :to="link.slug">
       <b-list-group-item class="bg-dark">
         {{ link.name }}
       </b-list-group-item>
@@ -13,7 +13,7 @@ export default {
     return {
       links: [
         {
-          slug: '/users',
+          slug: '/usersAdmin',
           name: 'User'
         },
         {

@@ -8,7 +8,7 @@
       :key="index"
       to="genre"
     >
-      <div id="link" class="border-bottom py-2 text-center font-color">
+      <div id="link" class="py-2 text-center font-color">
         {{ genre }}
       </div>
     </nuxt-link>
