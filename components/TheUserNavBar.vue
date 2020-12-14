@@ -2,16 +2,20 @@
   <div>
     <div>
       <b-navbar toggleable="lg" type="dark" variant="info" class="shadow rounded">
-        <b-navbar-brand href="#">
-          Good Reads
+        <b-navbar-brand>
+          <nuxt-link class="text-light" to="userDashbord">
+            Good Reads
+          </nuxt-link>
         </b-navbar-brand>
 
         <b-navbar-toggle target="nav-collapse" />
 
         <b-collapse id="nav-collapse" is-nav>
           <b-navbar-nav>
-            <b-nav-item href="#">
-              My Books
+            <b-nav-item>
+              <nuxt-link id="mybooks" class="text-light" to="userDashbord">
+                My Books
+              </nuxt-link>
             </b-nav-item>
           </b-navbar-nav>
 
@@ -42,3 +46,8 @@
     </div>
   </div>
 </template>
+<style scoped>
+#mybooks{
+  color:black;
+}
+</style>
