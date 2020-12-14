@@ -18,6 +18,10 @@ export default {
     return {
       links: [
         {
+          slug: '/',
+          name: 'Dashbord'
+        },
+        {
           slug: '/usersAdmin',
           name: 'User'
         },
@@ -28,10 +32,6 @@ export default {
         {
           slug: '/books',
           name: 'Books'
-        },
-        {
-          slug: '/',
-          name: 'Dashbord'
         }
       ]
     }
