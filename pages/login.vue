@@ -35,6 +35,7 @@
 
 <script>
 export default {
+  layout: 'auth',
   data () {
     return {
       form: {
