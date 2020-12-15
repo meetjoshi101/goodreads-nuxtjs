@@ -37,7 +37,9 @@ export default {
     icons: true
   },
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
-  axios: {},
+  axios: {
+    baseURL: 'https://goodreadsnode.herokuapp.com/'
+  },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {

@@ -34,6 +34,9 @@
 </template>
 
 <script>
+/* eslint-disable no-console */
+const Cookie = process.client ? require('js-cookie') : undefined
+
 export default {
   layout: 'auth',
   data () {
@@ -41,14 +44,41 @@ export default {
       form: {
 
         email: '',
-        password: ''
+        password: '',
+        authantication: null
+      }
+    }
+  },
+  watch: {
+    authantication (newValue) {
+      if (newValue === true) {
+        console.log('true')
+      } else {
+        console.log('false')
       }
     }
   },
   methods: {
     onSubmit (event) {
+      let token, msg
       event.preventDefault()
-      alert(JSON.stringify(this.form))
+      this.$axios.$post('/user/login', {
+        email: this.form.email,
+        password: this.form.password
+      }).then(
+        (res) => {
+          msg = res.message
+          token = res.token
+          console.log(msg + ' ' + token)
+          this.$store.commit('setAuth', token)
+          Cookie.set('token', token)
+          this.$router.push('/userDashbord')
+        },
+        (err) => {
+          console.log(err.message)
+          this.$router.push('/signup')
+        }
+      )
     }
   }
 }
