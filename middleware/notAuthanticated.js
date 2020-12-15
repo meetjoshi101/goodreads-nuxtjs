@@ -1,5 +1,9 @@
 export default ({ store, redirect, route }) => {
   if (store.state.Auth.token) {
-    redirect('/')
+    if (store.state.Auth.role === 'A') {
+      redirect('/adminDashbord')
+    } else {
+      redirect('/')
+    }
   }
 }

@@ -20,7 +20,7 @@
             <b-dropdown-item href="#">
               Profile
             </b-dropdown-item>
-            <b-dropdown-item href="#">
+            <b-dropdown-item @click="logout">
               Sign Out
             </b-dropdown-item>
           </b-nav-item-dropdown>
@@ -31,8 +31,16 @@
 </template>
 
 <script>
+const Cookie = process.client ? require('js-cookie') : undefined
+
 export default {
-  name: 'TheNavBar'
+  methods: {
+    logout () {
+      Cookie.remove('token')
+      this.$store.commit('LOGOUT')
+      this.$router.replace('login')
+    }
+  }
 }
 </script>
 

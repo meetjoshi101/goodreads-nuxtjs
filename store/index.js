@@ -21,6 +21,12 @@ const createStore = () => {
         state.Auth.id = decoded.id
         state.Auth.email = decoded.email
         state.Auth.role = decoded.role
+      },
+      LOGOUT (state) {
+        state.Auth.token = null
+        state.Auth.id = null
+        state.Auth.email = ''
+        state.Auth.role = ''
       }
     },
     actions: {

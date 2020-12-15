@@ -28,7 +28,7 @@
               </b-button>
             </b-nav-form>
 
-            <b-nav-item-dropdown right>
+            <b-nav-item-dropdown v-if="isLogin" right>
               <!-- Using 'button-content' slot -->
               <template #button-content>
                 <b-avatar variant="light" />
@@ -36,7 +36,7 @@
               <b-dropdown-item href="#">
                 Profile
               </b-dropdown-item>
-              <b-dropdown-item href="#">
+              <b-dropdown-item @click="logout">
                 Sign Out
               </b-dropdown-item>
             </b-nav-item-dropdown>
@@ -51,3 +51,20 @@
   color:black;
 }
 </style>
+<script>
+const Cookie = process.client ? require('js-cookie') : undefined
+
+export default {
+  data () {
+    return {
+      isLogin: true
+    }
+  },
+  methods: {
+    logout () {
+      Cookie.remove('token')
+      this.$store.commit('LOGOUT')
+    }
+  }
+}
+</script>

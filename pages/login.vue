@@ -67,16 +67,14 @@ export default {
   },
   methods: {
     onSubmit (event) {
-      let token, msg
+      let token
       event.preventDefault()
       this.$axios.$post('/user/login', {
         email: this.form.email,
         password: this.form.password
       }).then(
         (res) => {
-          msg = res.message
           token = res.token
-          console.log(msg + ' ' + token)
           this.$store.commit('setAuth', token)
           Cookie.set('token', token)
           // this.$router.push('/userDashbord')

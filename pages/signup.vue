@@ -73,6 +73,8 @@
 
 <script>
 /* eslint-disable no-console */
+const Cookie = process.client ? require('js-cookie') : undefined
+
 export default {
   middleware: [
     'notAuthanticated'
@@ -102,6 +104,7 @@ export default {
   },
   methods: {
     onSubmit (event) {
+      let token
       event.preventDefault()
       this.$axios
         .$post('/user/signup', {
@@ -110,7 +113,9 @@ export default {
           name: this.form.name,
           genreList: this.selected
         }).then((res) => {
-          console.log(res)
+          token = res.token
+          this.$store.commit('setAuth', token)
+          Cookie.set('token', token)
         }, (err) => {
           console.log(err)
         })
