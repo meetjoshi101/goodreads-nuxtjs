@@ -43,11 +43,13 @@
 const Cookie = process.client ? require('js-cookie') : undefined
 
 export default {
+  middleware: [
+    'notAuthanticated'
+  ],
   layout: 'auth',
   data () {
     return {
       form: {
-
         email: '',
         password: '',
         authantication: null

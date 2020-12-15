@@ -22,9 +22,6 @@
 import TheBookcard from '../components/TheBookCard'
 
 export default {
-  middleware: [
-    'authanticated'
-  ],
   layout: 'users',
   components: {
     TheBookcard
