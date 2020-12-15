@@ -38,6 +38,11 @@
         Submit
       </b-button>
     </b-form>
+    <nuxt-link to="/login" class="text-right">
+      <p class="my-4">
+        Have Account Click Here To Login
+      </p>
+    </nuxt-link>
   </div>
 </template>
 

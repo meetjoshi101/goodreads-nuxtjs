@@ -1,58 +1,36 @@
 <template>
-  <div>
-    <b-card-group deck>
-      <b-card
-        border-variant="primary"
-        header="Books"
-        header-bg-variant="primary"
-        header-text-variant="white"
-        align="center"
-      >
-        <b-card-text>
-          <b-icon icon="book" />
-          10000
-        </b-card-text>
-      </b-card>
-      <b-card
-        border-variant="secondary"
-        header="Genres"
-        header-border-variant="info"
-        align="center"
-      >
-        <b-card-text>
-          <b-icon-bookmark-heart-fill />
-          100
-        </b-card-text>
-      </b-card>
-      <b-card
-        border-variant="danger"
-        header="User"
-        header-border-variant="danger"
-        header-text-variant="danger"
-        align="center"
-      >
-        <b-card-text>
-          <b-icon-emoji-laughing />1000
-        </b-card-text>
-      </b-card>
-    </b-card-group>
+  <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+    <div class="col mb-2">
+      <TheBookcard />
+    </div>
+    <div class="col mb-2">
+      <TheBookcard />
+    </div>
+    <div class="col mb-2">
+      <TheBookcard />
+    </div>
+    <div class="col mb-2">
+      <TheBookcard />
+    </div>
+    <div class="col mb-2">
+      <TheBookcard />
+    </div>
   </div>
 </template>
 
 <script>
+import TheBookcard from '../components/TheBookCard'
+
 export default {
-  layout: 'default'
+  middleware: [
+    'authanticated'
+  ],
+  layout: 'users',
+  components: {
+    TheBookcard
+  }
 }
 </script>
 
-<style>
-.title {
-  font-family: "Quicksand", "Source Sans Pro", -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
+<style >
 </style>

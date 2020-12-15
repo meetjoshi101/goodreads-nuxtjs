@@ -9,6 +9,7 @@ const createStore = () => {
     state: () => ({
       Auth: {
         token: null,
+        id: null,
         email: '',
         role: ''
       }
@@ -17,6 +18,7 @@ const createStore = () => {
       setAuth (state, token) {
         const decoded = jwt.verify(token, '123')
         state.Auth.token = token
+        state.Auth.id = decoded.id
         state.Auth.email = decoded.email
         state.Auth.role = decoded.role
       }
@@ -26,15 +28,16 @@ const createStore = () => {
         let token = null
         if (req.headers.cookie) {
           const parsed = cookieparser.parse(req.headers.cookie)
-          console.log(parsed.token)
           try {
-            token = JSON.parse(parsed.token)
+            token = parsed.token
+            if (token && token.length > 0) {
+              commit('setAuth', token)
+            }
           } catch (err) {
             // No valid cookie found
             console.log(err)
           }
         }
-        commit('setAuth', token)
       }
     }
   })

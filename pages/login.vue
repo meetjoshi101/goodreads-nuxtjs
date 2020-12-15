@@ -30,6 +30,11 @@
         Submit
       </b-button>
     </b-form>
+    <nuxt-link to="/signup" class="text-right">
+      <p class="my-4">
+        Don't Have Account Click Here To Signup
+      </p>
+    </nuxt-link>
   </div>
 </template>
 
@@ -72,11 +77,11 @@ export default {
           console.log(msg + ' ' + token)
           this.$store.commit('setAuth', token)
           Cookie.set('token', token)
-          this.$router.push('/userDashbord')
+          // this.$router.push('/userDashbord')
         },
         (err) => {
           console.log(err.message)
-          this.$router.push('/signup')
+          // this.$router.push('/signup')
         }
       )
     }
