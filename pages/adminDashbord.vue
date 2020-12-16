@@ -44,7 +44,10 @@ export default {
   middleware: [
     'authanticated'
   ],
-  layout: 'default'
+  layout: 'default',
+  created () {
+    this.$axios.setToken(this.$store.state.Auth.token, 'Bearer')
+  }
 }
 </script>
 

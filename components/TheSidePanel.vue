@@ -18,7 +18,7 @@ export default {
     return {
       links: [
         {
-          slug: '/',
+          slug: '/adminDashbord',
           name: 'Dashbord'
         },
         {

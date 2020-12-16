@@ -37,10 +37,7 @@
     <b-table striped hover :items="items" :fields="fields">
       <template #cell(Utility)="data">
         <b-button-group>
-          <b-button variant="info" @click="edit(data.item.Name)">
-            Edit
-          </b-button>
-          <b-button variant="danger" @click="Delete(data.item.Name)">
+          <b-button variant="danger" @click="Delete(data.item.email)">
             Delete
           </b-button>
         </b-button-group>
@@ -54,28 +51,41 @@
 /* eslint-disable no-console */
 /* eslint-disable eqeqeq */
 export default {
+  middleware: ['authanticated'],
   data () {
     return {
-      fields: ['Email'],
-      items: [
-        {
-          Email: 'meet@gmail.com'
-        }
-      ],
+      fields: ['email', 'name', 'role', 'Utility'],
+      items: [],
       emailState: null,
       email: null
     }
   },
+  created () {
+    this.$axios.setToken(this.$store.state.Auth.token, 'Bearer')
+    this.$axios.$get('/user/users').then(
+      (res) => {
+        this.items = res.Users
+      },
+      (err) => {
+        console.log(err)
+      }
+    )
+  },
   methods: {
-    edit (email) {
-      // eslint-disable-next-line no-console
-      console.log(email)
-    },
     Delete (email) {
-      console.log(email)
+      this.$axios.$delete(`/user/${email}`).then((res) => {
+        console.log(res)
+      }, (err) => {
+        console.log(err)
+      })
     },
     addAdmin () {
-      console.log('add Genre')
+      // eslint-disable-next-line quotes
+      this.$axios.$patch(`/user/admin-user/${this.email}`).then((res) => {
+        console.log(res)
+      }, (err) => {
+        console.log(err)
+      })
     },
     checkFormValidity () {
       let valid = true
