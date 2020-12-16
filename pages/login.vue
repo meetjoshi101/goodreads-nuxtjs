@@ -1,5 +1,6 @@
+
 <template>
-  <div class="shadow-lg p-3 mb-5 bg-white rounded login-panel text-center">
+  <div class="shadow-lg p-3 mb-5 bg-white text-center rounded login-panel">
     <div class="h5">
       Login
     </div>
@@ -17,7 +18,7 @@
           required
         />
       </b-form-group>
-      <b-form-group id="input-group-2" label="Passwors" label-for="input-2">
+      <b-form-group id="input-group-2" label="Password" label-for="input-2">
         <b-form-input
           id="input-2"
           v-model="form.password"
@@ -40,6 +41,7 @@
 
 <script>
 /* eslint-disable no-console */
+/* eslint-disable eqeqeq */
 const Cookie = process.client ? require('js-cookie') : undefined
 
 export default {
@@ -77,7 +79,11 @@ export default {
           token = res.token
           this.$store.commit('setAuth', token)
           Cookie.set('token', token)
-          // this.$router.push('/userDashbord')
+          if (this.$store.state.Auth.role == 'U') {
+            this.$router.replace('/')
+          } else {
+            this.$router.replace('/adminDashbord')
+          }
         },
         (err) => {
           console.log(err.message)
@@ -91,6 +97,6 @@ export default {
 
 <style>
 .login-panel{
-   max-width: 50vw;
+   max-width: 30vw;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="shadow-lg p-3 mb-5 bg-white rounded login-panel text-center">
     <div class="h5">
-      signup
+      Signup
     </div>
     <b-form @submit="onSubmit">
       <div v-if="notShowSubmit">
@@ -26,7 +26,7 @@
             required
           />
         </b-form-group>
-        <b-form-group id="input-group-2" label="Passwors" label-for="input-2">
+        <b-form-group id="input-group-2" label="Password" label-for="input-2">
           <b-form-input
             id="input-2"
             v-model="form.password"
@@ -116,6 +116,7 @@ export default {
           token = res.token
           this.$store.commit('setAuth', token)
           Cookie.set('token', token)
+          this.$router.replace('/')
         }, (err) => {
           console.log(err)
         })
@@ -132,8 +133,8 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .login-panel {
-  max-width: 50vw;
+  max-width: 30vw;
 }
 </style>

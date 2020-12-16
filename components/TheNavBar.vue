@@ -17,9 +17,6 @@
             <template #button-content>
               <b-avatar variant="dark" />
             </template>
-            <b-dropdown-item href="#">
-              Profile
-            </b-dropdown-item>
             <b-dropdown-item @click="logout">
               Sign Out
             </b-dropdown-item>

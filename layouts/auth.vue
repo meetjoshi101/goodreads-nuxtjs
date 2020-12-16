@@ -6,6 +6,6 @@
 <style>
 .auth-style{
   margin-top: 20vh;
-  margin-left: 25vw;
+  margin-left: 35vw;
 }
 </style>
