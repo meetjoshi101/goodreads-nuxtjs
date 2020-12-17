@@ -3,7 +3,7 @@
     <b-modal
       id="modal-scrollable"
       ref="modal"
-      title="Add Books"
+      title="Add Admin"
       scrollable
       @show="resetModal"
       @hidden="resetModal"

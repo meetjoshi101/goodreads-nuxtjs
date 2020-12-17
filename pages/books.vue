@@ -1,19 +1,34 @@
 <template>
   <div>
     <b-modal
+      id="deleteOk"
+      title="Sure To Delete"
+    >
+      <p>
+        Book Deleted
+      </p>
+    </b-modal>
+    <b-modal
       id="modal-scrollable"
       ref="modal"
-      title="Add Books"
+      :title="isEdit ? 'Edit Book' : 'Add Book'"
       scrollable
+      no-close-on-esc
+      no-close-on-backdrop
+      hide-header-close
       @show="resetModal"
       @hidden="resetModal"
       @ok="handleOk"
+      @cancel="cancle"
     >
       <form
         ref="form"
         title="Scrollable Content"
         @submit.stop.prevent="handleSubmit"
       >
+        <div v-if="isEdit">
+          ISBN:{{ isbn }}
+        </div>
         <b-form-group
           v-if="!isEdit"
           :state="isbnState"
@@ -99,7 +114,7 @@
             required
           />
         </b-form-group>
-        <b-dropdown id="dropdown-1" :text="selectedGenre" class="m-md-2">
+        <b-dropdown id="dropdown-1" :text="selectedGenre" dropup class="m-md-2 my-class">
           <b-dropdown-item v-for="genre in genres" :key="genre.id" @click="selectGenre(genre.id, genre.name)">
             {{ genre.name }}
           </b-dropdown-item>
@@ -182,33 +197,42 @@ export default {
       isEdit: false,
       editISBN: null,
       selectedBook: null,
-      s: ''
+      s: '',
+      isSearch: false
     }
   },
   created () {
     this.$axios.setToken(this.$store.state.Auth.token, 'Bearer')
-    this.$axios.$get('/book').then(
-      (res) => {
-        this.items = res.book
-        this.$axios.$get('/genre').then(
-          (res) => {
-            this.genres = res.genres
-            this.genres.sort((book1, book2) => {
-              return compareObjects(book1, book2, 'name')
-            })
-          },
-          (err) => {
-            console.log(err)
-          }
-        )
-      },
-      (err) => {
-        console.log(err)
-      }
-    )
+    this.getBooks()
   },
   methods: {
+    getBooks () {
+      this.isSearch = false
+      this.$axios.$get('/book').then(
+        (res) => {
+          this.items = res.book
+          this.$axios.$get('/genre').then(
+            (res) => {
+              this.genres = res.genres
+              this.genres.sort((book1, book2) => {
+                return compareObjects(book1, book2, 'name')
+              })
+            },
+            (err) => {
+              console.log(err)
+            }
+          )
+        },
+        (err) => {
+          console.log(err)
+        }
+      )
+    },
+    cancle () {
+      this.isEdit = false
+    },
     search () {
+      this.isSearch = true
       this.$axios.$post('/book/search', {
         s: this.s
       }).then((res) => {
@@ -244,7 +268,12 @@ export default {
     },
     Delete (ISBN) {
       this.$axios.$delete(`/book/delete/isbn/${ISBN}`).then((res) => {
-        console.log(res)
+        this.$bvModal.show('deleteOk')
+        if (this.isSearch) {
+          this.search()
+        } else {
+          this.getBooks()
+        }
       }, (err) => {
         console.log(err)
       })
@@ -285,11 +314,11 @@ export default {
         this.descriptionState = true
         this.authorState = false
         valid = false
-      } else if (this.publicationYear == '') {
+      } else if (this.publicationYear == '' || this.publicationYear > 2020) {
         this.authorState = true
         this.publicationYearState = false
         valid = false
-      } else if (this.avgRating == '') {
+      } else if (this.avgRating == '' || this.avgRating > 5 || this.avgRating < 0) {
         this.avgRatingState = false
         valid = false
       } else {
@@ -362,4 +391,9 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+  .my-class /deep/ .dropdown-menu {
+    max-height: 500px;
+    overflow-y: auto;
+  }
+</style>

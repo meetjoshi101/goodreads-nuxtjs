@@ -1,13 +1,25 @@
 <template>
   <div>
     <b-modal
+      id="deleteOk"
+      title="Sure To Delete"
+    >
+      <p>
+        Book Deleted
+      </p>
+    </b-modal>
+    <b-modal
       id="modal-scrollable"
       ref="modal"
       :title="isEdit ? 'Edit' : 'Add'"
       scrollable
+      no-close-on-esc
+      no-close-on-backdrop
+      hide-header-close
       @show="resetModal"
       @hidden="resetModal"
       @ok="handleOk"
+      @cancel="cancle"
     >
       <form
         ref="form"
@@ -101,6 +113,9 @@ export default {
         }
       )
     },
+    cancle () {
+      this.isEdit = false
+    },
     edit (id) {
       this.isEdit = true
       this.editId = id
@@ -109,6 +124,7 @@ export default {
       this.$axios.$delete(`/genre/delete/${id}`).then(
         (res) => {
           this.items = this.items.filter(i => i.id != id)
+          this.$bvModal.show('deleteOk')
         },
         (err) => {
           console.log(err)
