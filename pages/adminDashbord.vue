@@ -42,7 +42,7 @@
 <script>
 export default {
   middleware: [
-    'authanticated'
+    'adminAuthanticated'
   ],
   layout: 'default',
   created () {

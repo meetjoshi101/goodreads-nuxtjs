@@ -62,19 +62,23 @@ export default {
   },
   created () {
     this.$axios.setToken(this.$store.state.Auth.token, 'Bearer')
-    this.$axios.$get('/user/users').then(
-      (res) => {
-        this.items = res.Users
-      },
-      (err) => {
-        console.log(err)
-      }
-    )
+    this.getUser()
   },
   methods: {
+    getUser () {
+      this.$axios.$get('/user/users').then(
+        (res) => {
+          this.items = res.Users
+        },
+        (err) => {
+          console.log(err)
+        }
+      )
+    },
     Delete (email) {
       this.$axios.$delete(`/user/${email}`).then((res) => {
         console.log(res)
+        this.getUser()
       }, (err) => {
         console.log(err)
       })
@@ -83,6 +87,7 @@ export default {
       // eslint-disable-next-line quotes
       this.$axios.$patch(`/user/admin-user/${this.email}`).then((res) => {
         console.log(res)
+        this.getUser()
       }, (err) => {
         console.log(err)
       })

@@ -3,7 +3,7 @@
     <b-modal
       id="modal-scrollable"
       ref="modal"
-      title="Add Books"
+      :title="isEdit ? 'Edit' : 'Add'"
       scrollable
       @show="resetModal"
       @hidden="resetModal"
@@ -85,17 +85,7 @@ export default {
   },
   created () {
     this.$axios.setToken(this.$store.state.Auth.token, "Bearer")
-    this.$axios.$get("/genre").then(
-      (res) => {
-        this.items = res.genres
-        this.items.sort((book1, book2) => {
-          return compareObjects(book1, book2, "name")
-        })
-      },
-      (err) => {
-        console.log(err)
-      }
-    )
+    this.getGenres()
   },
   methods: {
     getGenres () {
@@ -142,7 +132,7 @@ export default {
         })
         .then(
           (res) => {
-            this.items.push(res.genre)
+            this.getGenres()
           },
           (err) => {
             console.log(err)
