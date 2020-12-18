@@ -1,6 +1,9 @@
 
 <template>
   <div class="shadow-lg p-3 mb-5 bg-white text-center rounded login-panel">
+    <b-alert :show="showAlert" variant="danger">
+      Auth Fail please enter correct Email and Password
+    </b-alert>
     <div class="h4 text-primary">
       Login
     </div>
@@ -26,7 +29,7 @@
       </b-button>
     </b-form>
     <nuxt-link to="/signup" class="text-right">
-      <p class="mt-2">
+      <p class="mt-2 signup-color">
         Don't Have Account Click Here To Signup
       </p>
     </nuxt-link>
@@ -49,7 +52,8 @@ export default {
         email: '',
         password: '',
         authantication: null
-      }
+      },
+      showAlert: false
     }
   },
   watch: {
@@ -81,6 +85,7 @@ export default {
         },
         (err) => {
           console.log(err.message)
+          this.showAlert = true
           // this.$router.push('/signup')
         }
       )
@@ -92,5 +97,8 @@ export default {
 <style>
 .login-panel{
    max-width: 25vw;
+}
+.signup-color{
+  color: rgb(138, 138, 138);
 }
 </style>

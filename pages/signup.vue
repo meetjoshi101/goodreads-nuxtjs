@@ -1,40 +1,38 @@
 <template>
   <div class="shadow-lg p-3 mb-5 bg-white rounded login-panel text-center">
-    <div class="h5">
+    <b-alert :show="showAlert" variant="danger">
+      Auth Fail Please Enter Valid Values
+    </b-alert>
+    <div class="h5 text-danger">
       Signup
     </div>
     <b-form @submit="onSubmit">
       <div v-if="notShowSubmit">
-        <b-form-group
-          id="input-group-1"
-          label="Email address:"
-          label-for="input-1"
-        >
-          <b-form-input
-            id="input-1"
-            v-model="form.email"
-            type="email"
-            placeholder="Enter email"
-            required
-          />
-        </b-form-group>
-        <b-form-group id="input-group-3" label="Name" label-for="input-3">
-          <b-form-input
-            id="input-3"
-            v-model="form.name"
-            placeholder="Enter Name"
-            required
-          />
-        </b-form-group>
-        <b-form-group id="input-group-2" label="Password" label-for="input-2">
-          <b-form-input
-            id="input-2"
-            v-model="form.password"
-            type="password"
-            placeholder="Enter Password"
-            required
-          />
-        </b-form-group>
+        <b-form-input
+          id="input-1"
+          v-model="form.email"
+          class="input"
+          type="email"
+          placeholder="You@example.com"
+          required
+        />
+
+        <b-form-input
+          id="input-3"
+          v-model="form.name"
+          class="input"
+          placeholder="Enter Name"
+          required
+        />
+
+        <b-form-input
+          id="input-2"
+          v-model="form.password"
+          class="input"
+          type="password"
+          placeholder="Enter Password"
+          required
+        />
       </div>
       <div v-if="showSubmit">
         <b-form-group v-slot="{ ariaDescribedby }" label="Using sub-components:">
@@ -59,7 +57,7 @@
         Prev
       </b-button>
 
-      <b-button v-if="showSubmit" type="submit" variant="primary">
+      <b-button v-if="showSubmit" type="submit" variant="success">
         Submit
       </b-button>
     </b-form>
@@ -90,7 +88,8 @@ export default {
       genresList: [],
       selected: [],
       showSubmit: false,
-      notShowSubmit: true
+      notShowSubmit: true,
+      showAlert: false
     }
   },
   created () {
@@ -118,6 +117,9 @@ export default {
           Cookie.set('token', token)
           this.$router.replace('/')
         }, (err) => {
+          this.showAlert = true
+          this.showSubmit = false
+          this.notShowSubmit = true
           console.log(err)
         })
     },
@@ -136,5 +138,9 @@ export default {
 <style scoped>
 .login-panel {
   max-width: 30vw;
+}
+.input{
+  margin-top: 5px;
+  margin-bottom: 10px ;
 }
 </style>
