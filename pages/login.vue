@@ -1,38 +1,32 @@
 
 <template>
   <div class="shadow-lg p-3 mb-5 bg-white text-center rounded login-panel">
-    <div class="h5">
+    <div class="h4 text-primary">
       Login
     </div>
     <b-form @submit="onSubmit">
-      <b-form-group
-        id="input-group-1"
-        label="Email address:"
-        label-for="input-1"
-      >
-        <b-form-input
-          id="input-1"
-          v-model="form.email"
-          type="email"
-          placeholder="Enter email"
-          required
-        />
-      </b-form-group>
-      <b-form-group id="input-group-2" label="Password" label-for="input-2">
-        <b-form-input
-          id="input-2"
-          v-model="form.password"
-          type="password"
-          placeholder="Enter Password"
-          required
-        />
-      </b-form-group>
+      <b-form-input
+        id="input-1"
+        v-model="form.email"
+        class="mb-2"
+        type="email"
+        placeholder="Enter email"
+        required
+      />
+      <b-form-input
+        id="input-2"
+        v-model="form.password"
+        class="mb-2"
+        type="password"
+        placeholder="Enter Password"
+        required
+      />
       <b-button type="submit" variant="primary">
         Submit
       </b-button>
     </b-form>
     <nuxt-link to="/signup" class="text-right">
-      <p class="my-4">
+      <p class="mt-2">
         Don't Have Account Click Here To Signup
       </p>
     </nuxt-link>
@@ -82,7 +76,7 @@ export default {
           if (this.$store.state.Auth.role == 'U') {
             this.$router.replace('/')
           } else {
-            this.$router.replace('/adminDashbord')
+            this.$router.replace('/admin')
           }
         },
         (err) => {
@@ -97,6 +91,6 @@ export default {
 
 <style>
 .login-panel{
-   max-width: 30vw;
+   max-width: 25vw;
 }
 </style>

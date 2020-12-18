@@ -18,19 +18,19 @@ export default {
     return {
       links: [
         {
-          slug: '/adminDashbord',
+          slug: '/admin',
           name: 'Dashbord'
         },
         {
-          slug: '/usersAdmin',
+          slug: '/admin/usersAdmin',
           name: 'User'
         },
         {
-          slug: '/genres',
+          slug: '/admin/genres',
           name: 'Genre'
         },
         {
-          slug: '/books',
+          slug: '/admin/books',
           name: 'Books'
         }
       ]

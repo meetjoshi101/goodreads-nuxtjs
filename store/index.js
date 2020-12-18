@@ -12,7 +12,10 @@ const createStore = () => {
         id: null,
         email: '',
         role: ''
-      }
+      },
+      books: [],
+      genres: [],
+      users: []
     }),
     mutations: {
       setAuth (state, token) {

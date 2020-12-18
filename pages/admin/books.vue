@@ -1,9 +1,6 @@
 <template>
   <div>
-    <b-modal
-      id="deleteOk"
-      title="Sure To Delete"
-    >
+    <b-modal id="deleteOk" title="Sure To Delete">
       <p>
         Book Deleted
       </p>
@@ -114,15 +111,30 @@
             required
           />
         </b-form-group>
-        <b-dropdown id="dropdown-1" :text="selectedGenre" dropup class="m-md-2 my-class">
-          <b-dropdown-item v-for="genre in genres" :key="genre.id" @click="selectGenre(genre.id, genre.name)">
+        <b-dropdown
+          id="dropdown-1"
+          :text="selectedGenre"
+          dropup
+          class="m-md-2 my-class"
+        >
+          <b-dropdown-item
+            v-for="genre in genres"
+            :key="genre.id"
+            @click="selectGenre(genre.id, genre.name)"
+          >
             {{ genre.name }}
           </b-dropdown-item>
         </b-dropdown>
       </form>
     </b-modal>
     <div class="d-flex justify-content-end mb-2">
-      <b-form-input v-model="s" size="sm" class="mr-sm-2" style="max-width: 20vw;" placeholder="Search" />
+      <b-form-input
+        v-model="s"
+        size="sm"
+        class="mr-sm-2"
+        style="max-width: 20vw;"
+        placeholder="Search"
+      />
       <b-button size="sm" class="my-2 my-sm-0 mx-2" @click="search">
         Search
       </b-button>
@@ -135,7 +147,11 @@
     <b-table striped hover :items="items" :fields="fields">
       <template #cell(Utility)="data">
         <b-button-group>
-          <b-button v-b-modal.modal-scrollable variant="info" @click="edit(data.item.ISBN)">
+          <b-button
+            v-b-modal.modal-scrollable
+            variant="info"
+            @click="edit(data.item.ISBN)"
+          >
             Edit
           </b-button>
           <b-button variant="danger" @click="Delete(data.item.ISBN)">
@@ -144,6 +160,14 @@
         </b-button-group>
       </template>
     </b-table>
+    <b-button-group>
+      <b-button variant="dark" @click="prev">
+        Prev
+      </b-button>
+      <b-button variant="success" @click="next">
+        Next
+      </b-button>
+    </b-button-group>
   </div>
 </template>
 
@@ -166,8 +190,15 @@ const compareObjects = (object1, object2, key) => {
 }
 
 export default {
+  watchQuery: true,
   layout: 'default',
   middleware: ['authanticated'],
+  async asyncData ({ $axios, route }) {
+    console.log('Async data')
+    console.log(route.query.page)
+    const items = await $axios.$get(`/book?page=${route.query.page}&limit=${route.query.limit}`)
+    return items
+  },
   data () {
     return {
       fields: [
@@ -177,6 +208,8 @@ export default {
         { key: 'AvgRating', lable: 'Rating' },
         'Utility'
       ],
+      page: this.$route.query.page ? this.$route.query.page : 1,
+      limit: 10,
       items: [],
       genres: [],
       selectedGenre: 'Art',
@@ -201,27 +234,49 @@ export default {
       isSearch: false
     }
   },
+
   created () {
     this.$axios.setToken(this.$store.state.Auth.token, 'Bearer')
-    this.getBooks()
+    this.getGenre()
+    if (this.$route.query.search) {
+      this.s = this.$route.query.search
+      this.search()
+    } else {
+      this.getBooks()
+    }
   },
   methods: {
+    next () {
+      this.page = Number(this.page) + 1
+      this.getBooks()
+    },
+    prev () {
+      this.page = Number(this.page) - 1
+      this.getBooks()
+    },
     getBooks () {
+      console.log('getBooks')
+      this.$router.push(`/books?page=${this.page}&limit=${this.limit}`)
       this.isSearch = false
-      this.$axios.$get('/book').then(
+      console.log(this.$route.query)
+      this.$axios.$get(`/book?page=${this.$route.query.page}&limit=${this.$route.query.limit}`)
+        .then(
+          (res) => {
+            this.items = res.book
+          },
+          (err) => {
+            console.log(err)
+          }
+        )
+    },
+    getGenre () {
+      this.genres = null
+      this.$axios.$get('/genre').then(
         (res) => {
-          this.items = res.book
-          this.$axios.$get('/genre').then(
-            (res) => {
-              this.genres = res.genres
-              this.genres.sort((book1, book2) => {
-                return compareObjects(book1, book2, 'name')
-              })
-            },
-            (err) => {
-              console.log(err)
-            }
-          )
+          this.genres = res.genres
+          this.genres.sort((book1, book2) => {
+            return compareObjects(book1, book2, 'name')
+          })
         },
         (err) => {
           console.log(err)
@@ -232,13 +287,10 @@ export default {
       this.isEdit = false
     },
     search () {
+      this.$router.push(`/books?search=${this.s}`)
       this.isSearch = true
-      this.$axios.$post('/book/search', {
-        s: this.s
-      }).then((res) => {
+      this.$axios.$get(`/book?search=${this.$route.query.search}`).then((res) => {
         this.items = res.result
-      }, (err) => {
-        console.log(err)
       })
     },
     edit (ISBN) {
@@ -256,27 +308,35 @@ export default {
         Author: this.author,
         Description: this.description,
         publication_Year: this.publicationYear,
-        'image-url': 'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg',
-        'image-url-s': 'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg'
+        'image-url':
+          'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg',
+        'image-url-s':
+          'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg'
       }
-      this.$axios.$patch('/book/edit-book', bookObj).then((res) => {
-        console.log(res)
-      }, (err) => {
-        console.log(err)
-      })
+      this.$axios.$patch('/book/edit-book', bookObj).then(
+        (res) => {
+          console.log(res)
+        },
+        (err) => {
+          console.log(err)
+        }
+      )
       this.isEdit = false
     },
     Delete (ISBN) {
-      this.$axios.$delete(`/book/delete/isbn/${ISBN}`).then((res) => {
-        this.$bvModal.show('deleteOk')
-        if (this.isSearch) {
-          this.search()
-        } else {
-          this.getBooks()
+      this.$axios.$delete(`/book/delete/isbn/${ISBN}`).then(
+        (res) => {
+          this.$bvModal.show('deleteOk')
+          if (this.isSearch) {
+            this.search()
+          } else {
+            this.getBooks()
+          }
+        },
+        (err) => {
+          console.log(err)
         }
-      }, (err) => {
-        console.log(err)
-      })
+      )
     },
     addBook () {
       const bookObj = {
@@ -287,15 +347,19 @@ export default {
         Author: this.author,
         Description: this.description,
         publication_Year: this.publicationYear,
-        'image-url': 'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg',
-        'image-url-s': 'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg'
+        'image-url':
+          'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg',
+        'image-url-s':
+          'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg'
       }
-      this.$axios.$post('book/add-book', bookObj)
-        .then((res) => {
+      this.$axios.$post('book/add-book', bookObj).then(
+        (res) => {
           console.log(res)
-        }, (err) => {
+        },
+        (err) => {
           console.log(err)
-        })
+        }
+      )
     },
     checkFormValidity () {
       let valid = true
@@ -318,7 +382,11 @@ export default {
         this.authorState = true
         this.publicationYearState = false
         valid = false
-      } else if (this.avgRating == '' || this.avgRating > 5 || this.avgRating < 0) {
+      } else if (
+        this.avgRating == '' ||
+        this.avgRating > 5 ||
+        this.avgRating < 0
+      ) {
         this.avgRatingState = false
         valid = false
       } else {
@@ -330,7 +398,9 @@ export default {
     resetModal () {
       if (this.isEdit) {
         this.selectedBook = this.items.find(b => b.ISBN == this.editISBN)
-        const seletctedGenre = this.genres.find(g => g.id == this.selectedBook.Gener_id)
+        const seletctedGenre = this.genres.find(
+          g => g.id == this.selectedBook.Gener_id
+        )
         console.log(seletctedGenre.name)
         this.isbn = this.selectedBook.ISBN
         this.isbnState = true
@@ -377,7 +447,9 @@ export default {
       // Push the name to submitted names
       if (this.isEdit) {
         this.editBook()
-      } else { this.addBook() }
+      } else {
+        this.addBook()
+      }
       // Hide the modal manually
       this.$nextTick(() => {
         this.$bvModal.hide('modal-scrollable')
@@ -392,8 +464,8 @@ export default {
 </script>
 
 <style scoped>
-  .my-class /deep/ .dropdown-menu {
-    max-height: 500px;
-    overflow-y: auto;
-  }
+.my-class /deep/ .dropdown-menu {
+  max-height: 200px;
+  overflow-y: auto;
+}
 </style>
