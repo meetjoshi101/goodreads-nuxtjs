@@ -30,6 +30,16 @@ const createStore = () => {
         state.Auth.id = null
         state.Auth.email = ''
         state.Auth.role = ''
+      },
+      SETUSERS (state, users) {
+        console.log('inside commit SETUSERS: ' + users)
+        state.users = users
+      }
+    },
+    getters: {
+      getUsers: state => () => {
+        console.log('inside Getter getUserd: ' + state.users)
+        return state.users
       }
     },
     actions: {
@@ -47,6 +57,27 @@ const createStore = () => {
             console.log(err)
           }
         }
+      },
+      fetchUsers ({ commit, state }) {
+        console.log('inside FetchUser')
+        this.$axios.setToken(state.Auth.token, 'Bearer')
+        this.$axios.$get('/user/users').then(
+          (res) => {
+            console.log('response: ' + res.Users)
+            commit('SETUSERS', res.Users)
+          },
+          (err) => {
+            console.log(err)
+          }
+        )
+      },
+      addAdmin ({ dispatch }, email) {
+        console.log('inside add admin: ' + email)
+        this.$axios.$patch(`/user/admin-user/${email}`).then((res) => {
+          console.log(res)
+        }, (err) => {
+          console.log(err)
+        })
       }
     }
   })

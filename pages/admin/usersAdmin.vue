@@ -51,46 +51,45 @@
 /* eslint-disable no-console */
 /* eslint-disable eqeqeq */
 export default {
+  watchQuery: true,
   middleware: ['authanticated'],
+  async asyncData ({ store }) {
+    console.log('inside Asyncdata')
+    await store.dispatch('fetchUsers')
+  },
   data () {
     return {
       fields: ['email', 'name', 'role', 'Utility'],
-      items: [],
+      // items: this.$store.getters.getUsers(),
       emailState: null,
       email: null
     }
   },
+  computed: {
+    items () {
+      return this.$store.getters.getUsers()
+    }
+  },
   created () {
-    this.$axios.setToken(this.$store.state.Auth.token, 'Bearer')
-    this.getUser()
+    this.$store.dispatch('fetchUsers')
   },
   methods: {
-    getUser () {
-      this.$axios.$get('/user/users').then(
-        (res) => {
-          this.items = res.Users
-        },
-        (err) => {
-          console.log(err)
-        }
-      )
-    },
     Delete (email) {
       this.$axios.$delete(`/user/${email}`).then((res) => {
         console.log(res)
-        this.getUser()
       }, (err) => {
         console.log(err)
       })
     },
     addAdmin () {
       // eslint-disable-next-line quotes
-      this.$axios.$patch(`/user/admin-user/${this.email}`).then((res) => {
-        console.log(res)
-        this.getUser()
-      }, (err) => {
-        console.log(err)
-      })
+      // this.$axios.$patch(`/user/admin-user/${this.email}`).then((res) => {
+      //   console.log(res)
+      // }, (err) => {
+      //   console.log(err)
+      // })
+      this.$store.dispatch('addAdmin')
+      this.$store.dispatch('fetchUsers')
     },
     checkFormValidity () {
       let valid = true
