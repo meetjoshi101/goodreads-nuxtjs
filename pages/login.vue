@@ -96,7 +96,7 @@ export default {
 
 <style>
 .login-panel{
-   max-width: 25vw;
+   max-width: 30vw;
 }
 .signup-color{
   color: rgb(138, 138, 138);

@@ -35,18 +35,25 @@
         />
       </div>
       <div v-if="showSubmit">
-        <b-form-group v-slot="{ ariaDescribedby }" label="Using sub-components:">
-          <b-form-checkbox-group
-            id="checkbox-group-2"
-            v-model="selected"
-            :aria-describedby="ariaDescribedby"
-            name="flavour-2"
-          >
-            <b-form-checkbox v-for="genre in genresList" :key="genre.id" :value="genre.id">
-              {{ genre.name }}
-            </b-form-checkbox>
-          </b-form-checkbox-group>
-        </b-form-group>
+        <div class="d-flex justify-content-center">
+          <b-form-group v-slot="{ ariaDescribedby }" label="Select Genre">
+            <b-form-checkbox-group
+              id="checkbox-group-2"
+              v-model="selected"
+              :aria-describedby="ariaDescribedby"
+              name="flavour-2"
+            >
+              <b-form-checkbox
+                v-for="genre in genresList"
+                :key="genre.id"
+                :value="genre.id"
+                class="d-inline-flex float-left"
+              >
+                {{ genre.name }}
+              </b-form-checkbox>
+            </b-form-checkbox-group>
+          </b-form-group>
+        </div>
       </div>
 
       <b-button v-if="notShowSubmit" variant="danger" @click="next">
