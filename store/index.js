@@ -1,8 +1,22 @@
+/* eslint-disable object-shorthand */
 /* eslint-disable no-console */
 import Vuex from 'vuex'
 import jwt from 'jsonwebtoken'
 
 const cookieparser = process.server ? require('cookieparser') : undefined
+
+const compareObjects = (object1, object2, key) => {
+  const obj1 = object1[key].toUpperCase()
+  const obj2 = object2[key].toUpperCase()
+
+  if (obj1 < obj2) {
+    return -1
+  }
+  if (obj1 > obj2) {
+    return 1
+  }
+  return 0
+}
 
 const createStore = () => {
   return new Vuex.Store({
@@ -33,11 +47,17 @@ const createStore = () => {
       },
       SETUSERS (state, users) {
         state.users = users
+      },
+      SETGENRES (state, genres) {
+        state.genres = genres
       }
     },
     getters: {
       getUsers: state => () => {
         return state.users
+      },
+      getGenres: state => () => {
+        return state.genres
       }
     },
     actions: {
@@ -82,6 +102,55 @@ const createStore = () => {
         return this.$axios.$delete(`/user/${email}`).then(
           (res) => {
             dispatch('fetchUsers')
+          },
+          (err) => {
+            console.log(err)
+          }
+        )
+      },
+      //! admin Genres Apis
+      fetchGenres ({ commit }) {
+        let genre
+        return this.$axios.$get('/genre').then(
+          (res) => {
+            genre = res.genres
+            genre.sort((book1, book2) => {
+              return compareObjects(book1, book2, 'name')
+            })
+            commit('SETGENRES', genre)
+          },
+          (err) => {
+            console.log(err)
+          }
+        )
+      },
+      addGenres ({ dispatch }, name) {
+        return this.$axios
+          .$post('/genre/add-genre', {
+            name: name
+          })
+          .then(
+            () => {
+              dispatch('fetchGenres')
+            },
+            (err) => {
+              console.log(err)
+            }
+          )
+      },
+      editGenre ({ dispatch }, genre) {
+        return this.$axios.$patch(`/genre/edit-genre/${genre.editId}`, {
+          name: genre.name
+        }).then(() => {
+          dispatch('fetchGenres')
+        }, (err) => {
+          console.log(err)
+        })
+      },
+      deleteGenre ({ dispatch }, id) {
+        return this.$axios.$delete(`/genre/delete/${id}`).then(
+          () => {
+            dispatch('fetchGenres')
           },
           (err) => {
             console.log(err)

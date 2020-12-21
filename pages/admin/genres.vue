@@ -2,10 +2,10 @@
   <div>
     <b-modal
       id="deleteOk"
-      title="Sure To Delete"
+      title="Deleted"
     >
       <p>
-        Book Deleted
+        Genre Deleted
       </p>
     </b-modal>
     <b-modal
@@ -66,53 +66,29 @@
 </template>
 
 <script>
-/* eslint-disable no-labels */
-/* eslint-disable no-console */
 /* eslint-disable eqeqeq */
 /* eslint-disable quotes */
-const compareObjects = (object1, object2, key) => {
-  const obj1 = object1[key].toUpperCase()
-  const obj2 = object2[key].toUpperCase()
-
-  if (obj1 < obj2) {
-    return -1
-  }
-  if (obj1 > obj2) {
-    return 1
-  }
-  return 0
-}
 
 export default {
   middleware: ['authanticated'],
+  async asyncData ({ store }) {
+    await store.dispatch('fetchGenres')
+  },
   data () {
     return {
       fields: [{ key: "name", lable: "Genre Name" }, "Utility"],
-      items: [],
       nameState: null,
       name: null,
       isEdit: false,
       editId: null
     }
   },
-  created () {
-    this.$axios.setToken(this.$store.state.Auth.token, "Bearer")
-    this.getGenres()
+  computed: {
+    items () {
+      return this.$store.getters.getGenres()
+    }
   },
   methods: {
-    getGenres () {
-      this.$axios.$get("/genre").then(
-        (res) => {
-          this.items = res.genres
-          this.items.sort((book1, book2) => {
-            return compareObjects(book1, book2, "name")
-          })
-        },
-        (err) => {
-          console.log(err)
-        }
-      )
-    },
     cancle () {
       this.isEdit = false
     },
@@ -121,39 +97,19 @@ export default {
       this.editId = id
     },
     Delete (id) {
-      this.$axios.$delete(`/genre/delete/${id}`).then(
-        (res) => {
-          this.items = this.items.filter(i => i.id != id)
-          this.$bvModal.show('deleteOk')
-        },
-        (err) => {
-          console.log(err)
-        }
-      )
+      this.$store.dispatch('deleteGenre', id)
+      this.$bvModal.show('deleteOk')
     },
     editGenre () {
-      this.$axios.$patch(`/genre/edit-genre/${this.editId}`, {
+      const genreObj = {
+        editId: this.editId,
         name: this.name
-      }).then((res) => {
-        this.getGenres()
-      }, (err) => {
-        console.log(err)
-      })
+      }
+      this.$store.dispatch('editGenre', genreObj)
       this.isEdit = false
     },
     addGenre () {
-      this.$axios
-        .$post("/genre/add-genre", {
-          name: this.name
-        })
-        .then(
-          (res) => {
-            this.getGenres()
-          },
-          (err) => {
-            console.log(err)
-          }
-        )
+      this.$store.dispatch('addGenres', this.name)
     },
     checkFormValidity () {
       let valid = true
