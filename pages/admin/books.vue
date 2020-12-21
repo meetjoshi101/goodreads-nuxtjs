@@ -39,7 +39,19 @@
         @submit.stop.prevent="handleSubmit"
       >
         <div v-if="isEdit">
-          ISBN:{{ isbn }}
+          <b-form-group
+            :state="isbnState"
+            label="ISBN"
+            label-for="ISBN-input"
+            invalid-feedback="ISBN is required"
+          >
+            <b-form-input
+              id="ISBN-input"
+              v-model="isbn"
+              :state="isbnState"
+              disabled
+            />
+          </b-form-group>
         </div>
         <b-form-group
           v-if="!isEdit"
@@ -389,7 +401,7 @@ export default {
           g => g.id == this.selectedBook.Gener_id
         )
         this.isbn = this.selectedBook.ISBN
-        this.isbnState = true
+        this.isbnState = null
         this.title = this.selectedBook.Title
         this.titleState = true
         this.description = 'HI Dis'
