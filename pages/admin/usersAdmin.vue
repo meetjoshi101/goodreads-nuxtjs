@@ -48,13 +48,11 @@
 
 <script>
 /* eslint-disable no-labels */
-/* eslint-disable no-console */
 /* eslint-disable eqeqeq */
 export default {
   watchQuery: true,
   middleware: ['authanticated'],
   async asyncData ({ store }) {
-    console.log('inside Asyncdata')
     await store.dispatch('fetchUsers')
   },
   data () {
@@ -70,26 +68,12 @@ export default {
       return this.$store.getters.getUsers()
     }
   },
-  created () {
-    this.$store.dispatch('fetchUsers')
-  },
   methods: {
     Delete (email) {
-      this.$axios.$delete(`/user/${email}`).then((res) => {
-        console.log(res)
-      }, (err) => {
-        console.log(err)
-      })
+      this.$store.dispatch('deleteUser', email)
     },
     addAdmin () {
-      // eslint-disable-next-line quotes
-      // this.$axios.$patch(`/user/admin-user/${this.email}`).then((res) => {
-      //   console.log(res)
-      // }, (err) => {
-      //   console.log(err)
-      // })
-      this.$store.dispatch('addAdmin')
-      this.$store.dispatch('fetchUsers')
+      this.$store.dispatch('addAdmin', this.email)
     },
     checkFormValidity () {
       let valid = true

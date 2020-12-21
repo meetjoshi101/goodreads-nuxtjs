@@ -1,4 +1,6 @@
 /* eslint-disable no-console */
 export default function ({ $axios, store }) {
-  $axios.setToken(store.state.Auth.token, 'Bearer')
+  $axios.onRequest((config) => {
+    config.headers.common.Authorization = `Bearer ${store.state.Auth.token}`
+  })
 }
