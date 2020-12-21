@@ -154,8 +154,14 @@ export default {
       return valid
     },
     resetModal () {
-      this.name = ""
-      this.nameState = null
+      if (this.isEdit) {
+        const tempGenre = this.items.find(genre => genre.id === this.editId)
+        this.name = tempGenre.name
+        this.nameState = true
+      } else {
+        this.name = ""
+        this.nameState = null
+      }
     },
     handleOk (bvModalEvt) {
       // Prevent modal from closing
