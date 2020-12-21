@@ -1,6 +1,11 @@
 <template>
   <div>
-    <b-modal id="deleteOk" title="Delete">
+    <b-modal id="askBookDelete" title="Are You Sure To Delete" @ok="Delete()">
+      <p>
+        Are You Sure To Delete this Book?
+      </p>
+    </b-modal>
+    <b-modal id="bookDeleted" title="Deleted" cancel-disabled>
       <p>
         Book Deleted
       </p>
@@ -164,7 +169,7 @@
           >
             Edit
           </b-button>
-          <b-button variant="danger" @click="Delete(data.item.ISBN)">
+          <b-button v-b-modal.askBookDelete variant="danger" @click="selectDelete(data.item.ISBN)">
             Delete
           </b-button>
         </b-button-group>
@@ -189,12 +194,17 @@ export default {
   watchQuery: true,
   layout: 'default',
   middleware: ['authanticated'],
-  async asyncData ({ store, route }) {
+  async asyncData ({ store, route, $router }) {
     await store.dispatch('fetchGenres')
     if (route.query.search) {
-      await store.dispatch('fetchBooks', route.query.search)
+      await store.dispatch('fetchBooks', { search: route.query.search })
     } else {
-      await store.dispatch('fetchBooks')
+      const page = route.query.page || 1
+      const limit = route.query.limit || 10
+      const pageLimitObj = {
+        page, limit
+      }
+      await store.dispatch('fetchBooks', { pageLimitArg: pageLimitObj })
     }
   },
   data () {
@@ -226,8 +236,9 @@ export default {
       isEdit: false,
       editISBN: null,
       selectedBook: null,
-      s: '',
-      isSearch: false
+      s: this.$route.query.search ? this.$route.query.search : '',
+      isSearch: false,
+      selectDeleteIsbn: null
     }
   },
   computed: {
@@ -238,31 +249,18 @@ export default {
       return this.$store.getters.getBooks()
     }
   },
-
-  created () {
-    if (this.$route.query.search) {
-      this.s = this.$route.query.search
-      this.search()
-    } else {
-      const queryObj = {
-        page: this.$route.query.page,
-        limit: this.$route.query.limit
-      }
-      this.$store.dispatch('setPageLimit', queryObj)
-      this.getBooks()
-    }
-  },
   methods: {
+    selectDelete (isbn) {
+      this.selectDeleteIsbn = isbn
+    },
     next () {
       this.page++
       this.$router.push(`/admin/books?page=${this.page}&limit=${this.limit}`)
-      this.$store.dispatch('navigatePage', 'Next')
     },
     prev () {
       if (this.page > 1) {
         this.page--
         this.$router.push(`/admin/books?page=${this.page}&limit=${this.limit}`)
-        this.$store.dispatch('navigatePage', 'prev')
       }
     },
     getBooks () {
@@ -301,20 +299,28 @@ export default {
       await this.$store.dispatch('editBook', bookObj)
       this.$bvModal.show('bookEdited')
       if (this.$route.query.search) {
-        this.$store.dispatch('fetchBooks', this.$route.query.search)
+        this.$store.dispatch('fetchBooks', { search: this.$route.query.search })
       } else {
-        this.$store.dispatch('fetchBooks')
+        const pageLimitObj = {
+          page: this.page,
+          limit: this.limit
+        }
+        this.$store.dispatch('fetchBooks', { pageLimitArg: pageLimitObj })
       }
       this.isEdit = false
     },
-    async Delete (ISBN) {
-      await this.$store.dispatch('deleteBook', ISBN)
+    async Delete () {
+      await this.$store.dispatch('deleteBook', this.selectDeleteIsbn)
+      this.$bvModal.show('bookDeleted')
       if (this.$route.query.search) {
-        this.$store.dispatch('fetchBooks', this.$route.query.search)
+        this.$store.dispatch('fetchBooks', { search: this.$route.query.search })
       } else {
-        this.$store.dispatch('fetchBooks')
+        const pageLimitObj = {
+          page: this.page,
+          limit: this.limit
+        }
+        this.$store.dispatch('fetchBooks', { pageLimitArg: pageLimitObj })
       }
-      this.$bvModal.show('deleteOk')
     },
     async addBook () {
       const bookObj = {
@@ -333,10 +339,13 @@ export default {
       await this.$store.dispatch('addBook', bookObj)
       this.$bvModal.show('bookAdded')
       if (this.$route.query.search) {
-        console.log('in search')
-        this.$store.dispatch('fetchBooks', this.$route.query.search)
+        this.$store.dispatch('fetchBooks', { search: this.$route.query.search })
       } else {
-        this.$store.dispatch('fetchBooks')
+        const pageLimitObj = {
+          page: this.page,
+          limit: this.limit
+        }
+        this.$store.dispatch('fetchBooks', { pageLimitArg: pageLimitObj })
       }
     },
     checkFormValidity () {

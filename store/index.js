@@ -27,8 +27,6 @@ const createStore = () => {
         email: '',
         role: ''
       },
-      page: 1,
-      limit: 0,
       books: [],
       genres: [],
       users: []
@@ -59,14 +57,6 @@ const createStore = () => {
       SETPAGELIMIT (state, pageLimit) {
         state.page = pageLimit.page || 1
         state.limit = pageLimit.limit || 10
-      },
-      NEXTPAGE (state) {
-        state.page = state.page + 1
-      },
-      PREVPAGE (state) {
-        if (state.page > 1) {
-          state.page = state.page - 1
-        }
       }
     },
     getters: {
@@ -191,14 +181,16 @@ const createStore = () => {
 
       //! admin Books Apis
 
-      fetchBooks ({ commit, state }, search) {
-        if (search) {
-          return this.$axios.$get(`/book?search=${search}`).then((res) => {
+      fetchBooks ({ commit }, args) {
+        if (args.search) {
+          console.log(args.search)
+          return this.$axios.$get(`/book?search=${args.search}`).then((res) => {
             commit('SETBOOKS', res.result)
           })
         } else {
+          console.log(args.pageLimitArg.page)
           return this.$axios
-            .$get(`/book?page=${state.page}&limit=${state.limit}`)
+            .$get(`/book?page=${args.pageLimitArg.page}&limit=${args.pageLimitArg.limit}`)
             .then(
               (res) => {
                 commit('SETBOOKS', res.book)
@@ -207,16 +199,6 @@ const createStore = () => {
                 console.log(err)
               }
             )
-        }
-      },
-      setPageLimit ({ commit }, pageLimit) {
-        commit('SETPAGELIMIT', pageLimit)
-      },
-      navigatePage ({ commit }, navigate) {
-        if (navigate === 'Next') {
-          commit('NEXTPAGE')
-        } else {
-          commit('PREVPAGE')
         }
       },
       addBook (context, bookObj) {
@@ -240,6 +222,7 @@ const createStore = () => {
         )
       },
       deleteBook (context, isbn) {
+        console.log(isbn)
         return this.$axios.$delete(`/book/delete/isbn/${isbn}`).then(
           (res) => {
             console.log(res)

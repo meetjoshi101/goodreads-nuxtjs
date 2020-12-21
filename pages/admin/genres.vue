@@ -1,6 +1,15 @@
 <template>
   <div>
     <b-modal
+      id="askDelete"
+      title="Delete"
+      @ok="Delete()"
+    >
+      <p>
+        Are You Sure To Delete genre?
+      </p>
+    </b-modal>
+    <b-modal
       id="deleteOk"
       title="Deleted"
     >
@@ -72,7 +81,7 @@
           >
             Edit
           </b-button>
-          <b-button variant="danger" @click="Delete(data.item.id)">
+          <b-button v-b-modal.askDelete variant="danger" @click="selectDelete(data.item.id)">
             Delete
           </b-button>
         </b-button-group>
@@ -96,7 +105,8 @@ export default {
       nameState: null,
       name: null,
       isEdit: false,
-      editId: null
+      editId: null,
+      deleteId: null
     }
   },
   computed: {
@@ -105,6 +115,9 @@ export default {
     }
   },
   methods: {
+    selectDelete (id) {
+      this.deleteId = id
+    },
     cancle () {
       this.isEdit = false
     },
@@ -112,8 +125,8 @@ export default {
       this.isEdit = true
       this.editId = id
     },
-    async Delete (id) {
-      await this.$store.dispatch('deleteGenre', id)
+    async Delete () {
+      await this.$store.dispatch('deleteGenre', this.deleteId)
       this.$bvModal.show('deleteOk')
     },
     async editGenre () {

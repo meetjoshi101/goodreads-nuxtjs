@@ -1,6 +1,15 @@
 <template>
   <div>
     <b-modal
+      id="askDelet"
+      title="Are You Sure to Deleted"
+      @ok="Delete()"
+    >
+      <p>
+        Are You Sure to Deleted?
+      </p>
+    </b-modal>
+    <b-modal
       id="Deleted"
       title="Deleted"
     >
@@ -53,7 +62,7 @@
     <b-table striped hover :items="items" :fields="fields">
       <template #cell(Utility)="data">
         <b-button-group>
-          <b-button variant="danger" @click="Delete(data.item.email)">
+          <b-button v-b-modal.askDelet variant="danger" @click="selectedDelete(data.item.email)">
             Delete
           </b-button>
         </b-button-group>
@@ -76,7 +85,8 @@ export default {
       fields: ['email', 'name', 'role', 'Utility'],
       // items: this.$store.getters.getUsers(),
       emailState: null,
-      email: null
+      email: null,
+      selectedEmail: null
     }
   },
   computed: {
@@ -85,13 +95,17 @@ export default {
     }
   },
   methods: {
-    async Delete (email) {
-      await this.$store.dispatch('deleteUser', email)
+
+    async Delete () {
+      await this.$store.dispatch('deleteUser', this.selectedEmail)
       this.$bvModal.show('Deleted')
     },
     async addAdmin () {
       await this.$store.dispatch('addAdmin', this.email)
       this.$bvModal.show('Added')
+    },
+    selectedDelete (email) {
+      this.selectedEmail = email
     },
     checkFormValidity () {
       let valid = true
