@@ -1,6 +1,22 @@
 <template>
   <div>
     <b-modal
+      id="Deleted"
+      title="Deleted"
+    >
+      <p>
+        User Deleted
+      </p>
+    </b-modal>
+    <b-modal
+      id="Added"
+      title="Added"
+    >
+      <p>
+        Admin Added
+      </p>
+    </b-modal>
+    <b-modal
       id="modal-scrollable"
       ref="modal"
       title="Add Admin"
@@ -69,11 +85,13 @@ export default {
     }
   },
   methods: {
-    Delete (email) {
-      this.$store.dispatch('deleteUser', email)
+    async Delete (email) {
+      await this.$store.dispatch('deleteUser', email)
+      this.$bvModal.show('Deleted')
     },
-    addAdmin () {
-      this.$store.dispatch('addAdmin', this.email)
+    async addAdmin () {
+      await this.$store.dispatch('addAdmin', this.email)
+      this.$bvModal.show('Added')
     },
     checkFormValidity () {
       let valid = true

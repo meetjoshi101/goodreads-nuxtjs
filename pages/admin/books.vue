@@ -1,8 +1,18 @@
 <template>
   <div>
-    <b-modal id="deleteOk" title="Sure To Delete">
+    <b-modal id="deleteOk" title="Delete">
       <p>
         Book Deleted
+      </p>
+    </b-modal>
+    <b-modal id="bookAdded" title="Added">
+      <p>
+        Book Added
+      </p>
+    </b-modal>
+    <b-modal id="bookEdited" title="Edited">
+      <p>
+        Book edited
       </p>
     </b-modal>
     <b-modal
@@ -160,7 +170,7 @@
         </b-button-group>
       </template>
     </b-table>
-    <b-button-group>
+    <b-button-group v-if="!isSearch">
       <b-button variant="dark" @click="prev">
         Prev
       </b-button>
@@ -175,29 +185,17 @@
 /* eslint-disable no-labels */
 /* eslint-disable no-console */
 /* eslint-disable eqeqeq */
-
-const compareObjects = (object1, object2, key) => {
-  const obj1 = object1[key].toUpperCase()
-  const obj2 = object2[key].toUpperCase()
-
-  if (obj1 < obj2) {
-    return -1
-  }
-  if (obj1 > obj2) {
-    return 1
-  }
-  return 0
-}
-
 export default {
   watchQuery: true,
   layout: 'default',
   middleware: ['authanticated'],
-  async asyncData ({ $axios, route }) {
-    console.log('Async data')
-    console.log(route.query.page)
-    const items = await $axios.$get(`/book?page=${route.query.page}&limit=${route.query.limit}`)
-    return items
+  async asyncData ({ store, route }) {
+    await store.dispatch('fetchGenres')
+    if (route.query.search) {
+      await store.dispatch('fetchBooks', route.query.search)
+    } else {
+      await store.dispatch('fetchBooks')
+    }
   },
   data () {
     return {
@@ -209,9 +207,7 @@ export default {
         'Utility'
       ],
       page: this.$route.query.page ? this.$route.query.page : 1,
-      limit: 10,
-      items: [],
-      genres: [],
+      limit: this.$route.query.limit ? this.$route.query.limit : 10,
       selectedGenre: 'Art',
       selectedGenreId: 1,
       isbnState: null,
@@ -234,64 +230,53 @@ export default {
       isSearch: false
     }
   },
+  computed: {
+    genres () {
+      return this.$store.getters.getGenres()
+    },
+    items () {
+      return this.$store.getters.getBooks()
+    }
+  },
 
   created () {
-    this.$axios.setToken(this.$store.state.Auth.token, 'Bearer')
-    this.getGenre()
     if (this.$route.query.search) {
       this.s = this.$route.query.search
       this.search()
     } else {
+      const queryObj = {
+        page: this.$route.query.page,
+        limit: this.$route.query.limit
+      }
+      this.$store.dispatch('setPageLimit', queryObj)
       this.getBooks()
     }
   },
   methods: {
     next () {
-      this.page = Number(this.page) + 1
-      this.getBooks()
+      this.page++
+      this.$router.push(`/admin/books?page=${this.page}&limit=${this.limit}`)
+      this.$store.dispatch('navigatePage', 'Next')
     },
     prev () {
-      this.page = Number(this.page) - 1
-      this.getBooks()
+      if (this.page > 1) {
+        this.page--
+        this.$router.push(`/admin/books?page=${this.page}&limit=${this.limit}`)
+        this.$store.dispatch('navigatePage', 'prev')
+      }
     },
     getBooks () {
-      console.log('getBooks')
-      this.$router.push(`/books?page=${this.page}&limit=${this.limit}`)
+      this.$router.push(`/admin/books?page=${this.page}&limit=${this.limit}`)
       this.isSearch = false
-      console.log(this.$route.query)
-      this.$axios.$get(`/book?page=${this.$route.query.page}&limit=${this.$route.query.limit}`)
-        .then(
-          (res) => {
-            this.items = res.book
-          },
-          (err) => {
-            console.log(err)
-          }
-        )
-    },
-    getGenre () {
-      this.genres = null
-      this.$axios.$get('/genre').then(
-        (res) => {
-          this.genres = res.genres
-          this.genres.sort((book1, book2) => {
-            return compareObjects(book1, book2, 'name')
-          })
-        },
-        (err) => {
-          console.log(err)
-        }
-      )
+      this.$store.dispatch('fetchBooks')
     },
     cancle () {
       this.isEdit = false
     },
     search () {
-      this.$router.push(`/books?search=${this.s}`)
+      this.$router.push(`/admin/books?search=${this.s}`)
       this.isSearch = true
-      this.$axios.$get(`/book?search=${this.$route.query.search}`).then((res) => {
-        this.items = res.result
-      })
+      this.$store.dispatch('fetchBooks', this.s)
     },
     edit (ISBN) {
       // eslint-disable-next-line no-console
@@ -299,7 +284,7 @@ export default {
       this.isEdit = true
       this.editISBN = ISBN
     },
-    editBook () {
+    async editBook () {
       const bookObj = {
         Gener_id: this.selectedGenreId,
         ISBN: this.editISBN,
@@ -313,32 +298,25 @@ export default {
         'image-url-s':
           'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg'
       }
-      this.$axios.$patch('/book/edit-book', bookObj).then(
-        (res) => {
-          console.log(res)
-        },
-        (err) => {
-          console.log(err)
-        }
-      )
+      await this.$store.dispatch('editBook', bookObj)
+      this.$bvModal.show('bookEdited')
+      if (this.$route.query.search) {
+        this.$store.dispatch('fetchBooks', this.$route.query.search)
+      } else {
+        this.$store.dispatch('fetchBooks')
+      }
       this.isEdit = false
     },
-    Delete (ISBN) {
-      this.$axios.$delete(`/book/delete/isbn/${ISBN}`).then(
-        (res) => {
-          this.$bvModal.show('deleteOk')
-          if (this.isSearch) {
-            this.search()
-          } else {
-            this.getBooks()
-          }
-        },
-        (err) => {
-          console.log(err)
-        }
-      )
+    async Delete (ISBN) {
+      await this.$store.dispatch('deleteBook', ISBN)
+      if (this.$route.query.search) {
+        this.$store.dispatch('fetchBooks', this.$route.query.search)
+      } else {
+        this.$store.dispatch('fetchBooks')
+      }
+      this.$bvModal.show('deleteOk')
     },
-    addBook () {
+    async addBook () {
       const bookObj = {
         Gener_id: this.selectedGenreId,
         ISBN: this.isbn,
@@ -352,14 +330,14 @@ export default {
         'image-url-s':
           'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg'
       }
-      this.$axios.$post('book/add-book', bookObj).then(
-        (res) => {
-          console.log(res)
-        },
-        (err) => {
-          console.log(err)
-        }
-      )
+      await this.$store.dispatch('addBook', bookObj)
+      this.$bvModal.show('bookAdded')
+      if (this.$route.query.search) {
+        console.log('in search')
+        this.$store.dispatch('fetchBooks', this.$route.query.search)
+      } else {
+        this.$store.dispatch('fetchBooks')
+      }
     },
     checkFormValidity () {
       let valid = true
@@ -397,11 +375,10 @@ export default {
     },
     resetModal () {
       if (this.isEdit) {
-        this.selectedBook = this.items.find(b => b.ISBN == this.editISBN)
+        this.selectedBook = this.$store.getters.getBookByIsbn(this.editISBN)
         const seletctedGenre = this.genres.find(
           g => g.id == this.selectedBook.Gener_id
         )
-        console.log(seletctedGenre.name)
         this.isbn = this.selectedBook.ISBN
         this.isbnState = true
         this.title = this.selectedBook.Title

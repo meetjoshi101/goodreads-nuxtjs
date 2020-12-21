@@ -9,6 +9,22 @@
       </p>
     </b-modal>
     <b-modal
+      id="genreAdded"
+      title="Added"
+    >
+      <p>
+        Genre Added
+      </p>
+    </b-modal>
+    <b-modal
+      id="genreEdited"
+      title="Edited"
+    >
+      <p>
+        Genre edited
+      </p>
+    </b-modal>
+    <b-modal
       id="modal-scrollable"
       ref="modal"
       :title="isEdit ? 'Edit' : 'Add'"
@@ -96,20 +112,22 @@ export default {
       this.isEdit = true
       this.editId = id
     },
-    Delete (id) {
-      this.$store.dispatch('deleteGenre', id)
+    async Delete (id) {
+      await this.$store.dispatch('deleteGenre', id)
       this.$bvModal.show('deleteOk')
     },
-    editGenre () {
+    async editGenre () {
       const genreObj = {
         editId: this.editId,
         name: this.name
       }
-      this.$store.dispatch('editGenre', genreObj)
+      await this.$store.dispatch('editGenre', genreObj)
+      this.$bvModal.show('genreEdited')
       this.isEdit = false
     },
-    addGenre () {
-      this.$store.dispatch('addGenres', this.name)
+    async addGenre () {
+      await this.$store.dispatch('addGenres', this.name)
+      this.$bvModal.show('genreAdded')
     },
     checkFormValidity () {
       let valid = true

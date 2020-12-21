@@ -27,6 +27,8 @@ const createStore = () => {
         email: '',
         role: ''
       },
+      page: 1,
+      limit: 0,
       books: [],
       genres: [],
       users: []
@@ -50,6 +52,21 @@ const createStore = () => {
       },
       SETGENRES (state, genres) {
         state.genres = genres
+      },
+      SETBOOKS (state, books) {
+        state.books = books
+      },
+      SETPAGELIMIT (state, pageLimit) {
+        state.page = pageLimit.page || 1
+        state.limit = pageLimit.limit || 10
+      },
+      NEXTPAGE (state) {
+        state.page = state.page + 1
+      },
+      PREVPAGE (state) {
+        if (state.page > 1) {
+          state.page = state.page - 1
+        }
       }
     },
     getters: {
@@ -58,6 +75,12 @@ const createStore = () => {
       },
       getGenres: state => () => {
         return state.genres
+      },
+      getBooks: state => () => {
+        return state.books
+      },
+      getBookByIsbn: state => (isbn) => {
+        return state.books.find(b => b.ISBN === isbn)
       }
     },
     actions: {
@@ -76,6 +99,7 @@ const createStore = () => {
           }
         }
       },
+
       //! admin user Apis
 
       fetchUsers ({ commit }) {
@@ -108,7 +132,9 @@ const createStore = () => {
           }
         )
       },
+
       //! admin Genres Apis
+
       fetchGenres ({ commit }) {
         let genre
         return this.$axios.$get('/genre').then(
@@ -139,18 +165,84 @@ const createStore = () => {
           )
       },
       editGenre ({ dispatch }, genre) {
-        return this.$axios.$patch(`/genre/edit-genre/${genre.editId}`, {
-          name: genre.name
-        }).then(() => {
-          dispatch('fetchGenres')
-        }, (err) => {
-          console.log(err)
-        })
+        return this.$axios
+          .$patch(`/genre/edit-genre/${genre.editId}`, {
+            name: genre.name
+          })
+          .then(
+            () => {
+              dispatch('fetchGenres')
+            },
+            (err) => {
+              console.log(err)
+            }
+          )
       },
       deleteGenre ({ dispatch }, id) {
         return this.$axios.$delete(`/genre/delete/${id}`).then(
           () => {
             dispatch('fetchGenres')
+          },
+          (err) => {
+            console.log(err)
+          }
+        )
+      },
+
+      //! admin Books Apis
+
+      fetchBooks ({ commit, state }, search) {
+        if (search) {
+          return this.$axios.$get(`/book?search=${search}`).then((res) => {
+            commit('SETBOOKS', res.result)
+          })
+        } else {
+          return this.$axios
+            .$get(`/book?page=${state.page}&limit=${state.limit}`)
+            .then(
+              (res) => {
+                commit('SETBOOKS', res.book)
+              },
+              (err) => {
+                console.log(err)
+              }
+            )
+        }
+      },
+      setPageLimit ({ commit }, pageLimit) {
+        commit('SETPAGELIMIT', pageLimit)
+      },
+      navigatePage ({ commit }, navigate) {
+        if (navigate === 'Next') {
+          commit('NEXTPAGE')
+        } else {
+          commit('PREVPAGE')
+        }
+      },
+      addBook (context, bookObj) {
+        return this.$axios.$post('book/add-book', bookObj).then(
+          (res) => {
+            console.log(res)
+          },
+          (err) => {
+            console.log(err)
+          }
+        )
+      },
+      editBook (context, bookObj) {
+        return this.$axios.$patch('/book/edit-book', bookObj).then(
+          (res) => {
+            console.log(res)
+          },
+          (err) => {
+            console.log(err)
+          }
+        )
+      },
+      deleteBook (context, isbn) {
+        return this.$axios.$delete(`/book/delete/isbn/${isbn}`).then(
+          (res) => {
+            console.log(res)
           },
           (err) => {
             console.log(err)
