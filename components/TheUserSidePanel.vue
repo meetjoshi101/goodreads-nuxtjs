@@ -1,28 +1,49 @@
 <template>
   <div class="shadow mb-5 bg-white rounded">
-    <h5 class="text-center border-bottom pb-2 ">
+    <div class="text-center border-bottom py-2 genre-colour">
       Genres
-    </h5>
-    <nuxt-link
-      v-for="(genre, index) in Genres"
-      :key="index"
-      to="genre"
-    >
-      <div id="link" class="py-2 text-center font-color">
-        {{ genre }}
-      </div>
-    </nuxt-link>
+    </div>
+    <div>
+      <nuxt-link
+        v-for="genre in Genres"
+        :key="genre.id"
+        to="genre"
+        class="link-colour d-flex border-bottom"
+      >
+        <div class="mx-2 my-2">
+          {{ genre.name }}
+        </div>
+      </nuxt-link>
+    </div>
   </div>
 </template>
 <script>
 export default {
+  async asyncData ({ store }) {
+    await store.dispatch('fetchGenres')
+  },
   data () {
     return {
-      Genres: ['Art', 'Scince', 'Math', 'Fiction', 'Love', 'Action']
+      Genres: this.$store.getters.getGenres()
     }
   }
 }
 </script>
 <style>
-
+.link-colour {
+  color: #379164;
+  font-weight: 200;
+}
+a.nuxt-link-exact-active {
+  color: #2ebdff;
+  font-weight: 200;
+  text-decoration: none;
+}
+.link-colour:hover {
+  color: rgb(130, 85, 255);
+  text-decoration: none;
+}
+.genre-colour{
+  color: rgb(61, 61, 61);
+}
 </style>

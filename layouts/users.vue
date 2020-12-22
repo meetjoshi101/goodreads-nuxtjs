@@ -30,19 +30,4 @@ export default {
 </script>
 
 <style>
-.nuxt-link-active {
-  color: rgb(9, 255, 0);
-  font-weight: bold;
-}
-/* exact link will show the primary color for only the exact matching link */
-.nuxt-link-exact-active {
-  color: #9d34ff;
-}
-
-a:hover{
-  text-decoration: none;
-  color: rgb(255, 45, 161);
-  font-size: 120%;
-}
-
 </style>
