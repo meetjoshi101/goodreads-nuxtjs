@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import TheBookcard from '../components/TheBookCard'
-
+/* eslint-disable no-console */
+import TheBookcard from '../../components/TheBookCard'
 export default {
   layout: 'users',
   watchQuery: true,
@@ -37,11 +37,13 @@ export default {
     } else {
       const page = route.query.page || 1
       const limit = route.query.limit || 9
-      const pageLimitObj = {
+      const genre = route.params.genre || 1
+      const argsObj = {
         page,
-        limit
+        limit,
+        genre
       }
-      await store.dispatch('fetchBooks', { pageLimitArg: pageLimitObj })
+      await store.dispatch('fetchBookByGenre', argsObj)
     }
   },
   data () {

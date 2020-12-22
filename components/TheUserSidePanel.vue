@@ -1,5 +1,5 @@
 <template>
-  <div class="shadow mb-5 bg-white rounded">
+  <div class="shadow mb-5 bg-white rounded side-panel">
     <div class="text-center border-bottom py-2 genre-colour">
       Genres
     </div>
@@ -7,7 +7,7 @@
       <nuxt-link
         v-for="genre in Genres"
         :key="genre.id"
-        to="genre"
+        :to="String(genre.id)"
         class="link-colour d-flex border-bottom"
       >
         <div class="mx-2 my-2">
@@ -45,5 +45,9 @@ a.nuxt-link-exact-active {
 }
 .genre-colour{
   color: rgb(61, 61, 61);
+}
+.side-panel{
+  max-height: 90vh;
+  overflow-y:scroll;
 }
 </style>

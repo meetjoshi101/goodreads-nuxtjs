@@ -231,6 +231,16 @@ const createStore = () => {
             console.log(err)
           }
         )
+      },
+      fetchBookByGenre ({ commit }, args) {
+        console.log(args)
+        return this.$axios.$get(`/book/genre?genre=${args.genre}&page=${args.page}&limit=${args.limit}`).then(
+          (res) => {
+            commit('SETBOOKS', res.book)
+          }, (err) => {
+            console.log(err)
+          }
+        )
       }
     }
   })
