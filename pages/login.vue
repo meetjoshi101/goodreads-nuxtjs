@@ -29,7 +29,7 @@
       </b-button>
     </b-form>
     <nuxt-link to="/signup" class="text-right">
-      <p class="mt-2 signup-color">
+      <p class="mt-4 signup-color">
         Don't Have Account Click Here To Signup
       </p>
     </nuxt-link>
@@ -100,5 +100,6 @@ export default {
 }
 .signup-color{
   color: rgb(138, 138, 138);
+  font-size: 0.7rem;
 }
 </style>

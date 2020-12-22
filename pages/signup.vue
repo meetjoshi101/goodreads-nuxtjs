@@ -69,7 +69,7 @@
       </b-button>
     </b-form>
     <nuxt-link to="/login" class="text-right">
-      <p class="my-4">
+      <p class="my-4 signup-color">
         Have Account Click Here To Login
       </p>
     </nuxt-link>
@@ -149,5 +149,9 @@ export default {
 .input{
   margin-top: 5px;
   margin-bottom: 10px ;
+}
+.signup-color{
+  color: rgb(138, 138, 138);
+  font-size: 0.7rem;
 }
 </style>
