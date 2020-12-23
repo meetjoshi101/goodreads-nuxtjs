@@ -29,7 +29,9 @@ const createStore = () => {
       },
       books: [],
       genres: [],
-      users: []
+      users: [],
+      book: null,
+      genre: null
     }),
     mutations: {
       setAuth (state, token) {
@@ -57,6 +59,12 @@ const createStore = () => {
       SETPAGELIMIT (state, pageLimit) {
         state.page = pageLimit.page || 1
         state.limit = pageLimit.limit || 10
+      },
+      SETBOOKBYISBN (state, book) {
+        state.book = book
+      },
+      SETGENREBYID (state, genre) {
+        state.genre = genre
       }
     },
     getters: {
@@ -71,6 +79,12 @@ const createStore = () => {
       },
       getBookByIsbn: state => (isbn) => {
         return state.books.find(b => b.ISBN === isbn)
+      },
+      getBook: state => () => {
+        return state.book
+      },
+      getGenre: state => () => {
+        return state.genre
       }
     },
     actions: {
@@ -140,6 +154,17 @@ const createStore = () => {
           }
         )
       },
+      fetchGenreById ({ commit }, id) {
+        console.log('fetch genre by id')
+        return this.$axios.$get(`/genre/${id}`).then(
+          (res) => {
+            commit('SETGENREBYID', res.genre[0])
+          },
+          (err) => {
+            console.log(err)
+          }
+        )
+      },
       addGenres ({ dispatch }, name) {
         return this.$axios
           .$post('/genre/add-genre', {
@@ -183,12 +208,10 @@ const createStore = () => {
 
       fetchBooks ({ commit }, args) {
         if (args.search) {
-          console.log(args.search)
           return this.$axios.$get(`/book?search=${args.search}`).then((res) => {
             commit('SETBOOKS', res.result)
           })
         } else {
-          console.log(args.pageLimitArg.page)
           return this.$axios
             .$get(`/book?page=${args.pageLimitArg.page}&limit=${args.pageLimitArg.limit}`)
             .then(
@@ -222,7 +245,6 @@ const createStore = () => {
         )
       },
       deleteBook (context, isbn) {
-        console.log(isbn)
         return this.$axios.$delete(`/book/delete/isbn/${isbn}`).then(
           (res) => {
             console.log(res)
@@ -233,11 +255,22 @@ const createStore = () => {
         )
       },
       fetchBookByGenre ({ commit }, args) {
-        console.log(args)
         return this.$axios.$get(`/book/genre?genre=${args.genre}&page=${args.page}&limit=${args.limit}`).then(
           (res) => {
             commit('SETBOOKS', res.book)
           }, (err) => {
+            console.log(err)
+          }
+        )
+      },
+      fetchBookByIsbn ({ commit, dispatch }, ISBN) {
+        console.log(ISBN)
+        return this.$axios.$get(`/book/isbn/${ISBN}`).then(
+          async (res) => {
+            commit('SETBOOKBYISBN', res.book[0])
+            await dispatch('fetchGenreById', res.book[0].Gener_id)
+          },
+          (err) => {
             console.log(err)
           }
         )

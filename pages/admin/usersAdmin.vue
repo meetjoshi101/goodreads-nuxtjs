@@ -76,7 +76,7 @@
 /* eslint-disable eqeqeq */
 export default {
   watchQuery: true,
-  middleware: ['authanticated'],
+  middleware: ['adminAuthanticated'],
   async asyncData ({ store }) {
     await store.dispatch('fetchUsers')
   },

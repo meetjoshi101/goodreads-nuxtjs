@@ -205,7 +205,7 @@
 export default {
   watchQuery: true,
   layout: 'default',
-  middleware: ['authanticated'],
+  middleware: ['adminAuthanticated'],
   async asyncData ({ store, route, $router }) {
     await store.dispatch('fetchGenres')
     if (route.query.search) {

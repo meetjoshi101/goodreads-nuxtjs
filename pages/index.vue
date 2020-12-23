@@ -1,14 +1,14 @@
 <template>
   <div>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
-      <div v-for="book in books" :key="book.id" class="col mb-4">
+      <nuxt-link v-for="book in books" :key="book.id" :to="'/book/'+book.ISBN" class="col mb-4">
         <TheBookcard
           :image-src="book.Image_url"
           :title="book.Title"
           :author="book.Author"
           :rating="book.AvgRating"
         />
-      </div>
+      </nuxt-link>
     </div>
     <b-button-group v-if="isSearch">
       <b-button variant="dark" @click="prev">

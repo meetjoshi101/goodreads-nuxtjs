@@ -12,7 +12,7 @@
 
         <b-collapse id="nav-collapse" is-nav>
           <b-navbar-nav>
-            <b-nav-item>
+            <b-nav-item v-if="isLogin">
               <nuxt-link to="/myBooks" class="nav-link">
                 My Books
               </nuxt-link>
@@ -31,9 +31,6 @@
               <template #button-content>
                 <b-avatar variant="light" />
               </template>
-              <b-dropdown-item href="#">
-                Profile
-              </b-dropdown-item>
               <b-dropdown-item @click="logout">
                 Sign Out
               </b-dropdown-item>

@@ -95,7 +95,7 @@
 /* eslint-disable quotes */
 
 export default {
-  middleware: ['authanticated'],
+  middleware: ['adminAuthanticated'],
   async asyncData ({ store }) {
     await store.dispatch('fetchGenres')
   },

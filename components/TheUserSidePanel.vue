@@ -7,7 +7,7 @@
       <nuxt-link
         v-for="genre in Genres"
         :key="genre.id"
-        :to="String(genre.id)"
+        :to="'/genre-book/'+String(genre.id)"
         class="link-colour d-flex border-bottom"
       >
         <div class="mx-2 my-2">

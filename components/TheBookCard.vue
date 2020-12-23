@@ -53,6 +53,7 @@ export default {
 <style scoped>
 .card{
   max-width: 20rem;
+  color: black;
 }
 .card-title{
   font-size: 0.8rem;
@@ -63,6 +64,8 @@ export default {
 }
 .author{
   font-size: 0.7rem;
+  color: black;
+  text-decoration: none;
 }
 .rating{
   font-size: 0.7rem;
