@@ -13,8 +13,8 @@
         <b-collapse id="nav-collapse" is-nav>
           <b-navbar-nav>
             <b-nav-item v-if="isLogin">
-              <nuxt-link to="/myBooks" class="nav-link">
-                My Books
+              <nuxt-link to="/my-reads" class="nav-link">
+                My Reads
               </nuxt-link>
             </b-nav-item>
           </b-navbar-nav>

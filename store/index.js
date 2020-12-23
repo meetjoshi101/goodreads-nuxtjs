@@ -30,6 +30,8 @@ const createStore = () => {
       books: [],
       genres: [],
       users: [],
+      reads: [],
+      readsBookData: [],
       book: null,
       genre: null
     }),
@@ -65,6 +67,12 @@ const createStore = () => {
       },
       SETGENREBYID (state, genre) {
         state.genre = genre
+      },
+      SETREADS (state, reads) {
+        state.reads = reads
+      },
+      SETREADSBOOKDATA (state, data) {
+        state.readsBookData.push(data)
       }
     },
     getters: {
@@ -85,6 +93,12 @@ const createStore = () => {
       },
       getGenre: state => () => {
         return state.genre
+      },
+      getReads: state => () => {
+        return state.reads
+      },
+      getReadsBookData: state => () => {
+        return state.readsBookData
       }
     },
     actions: {
@@ -274,6 +288,32 @@ const createStore = () => {
             console.log(err)
           }
         )
+      },
+
+      //! Reads Apis
+      fetchReads ({ commit }) {
+        return this.$axios.$get('/read/').then(
+          (res) => {
+            commit('SETREADS', res.reads)
+          }, (err) => {
+            console.log(err)
+          }
+        )
+      },
+      fetchReadsBookData ({ commit }, read) {
+        let bookDataObj
+        return this.$axios.$get(`/book/id/${read.book_id}`)
+          .then((res) => {
+            bookDataObj = {
+              id: read.id,
+              status: read.status,
+              Title: res.book[0].Title,
+              Author: res.book[0].Author
+            }
+            commit('SETREADSBOOKDATA', bookDataObj)
+          }, (err) => {
+            console.log(err)
+          })
       }
     }
   })
