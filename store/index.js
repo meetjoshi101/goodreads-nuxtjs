@@ -308,7 +308,8 @@ const createStore = () => {
               id: read.id,
               status: read.status,
               Title: res.book[0].Title,
-              Author: res.book[0].Author
+              Author: res.book[0].Author,
+              image: res.book[0].Image_url
             }
             commit('SETREADSBOOKDATA', bookDataObj)
           }, (err) => {
