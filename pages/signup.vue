@@ -7,7 +7,7 @@
       Signup
     </div>
     <b-form @submit="onSubmit">
-      <div v-if="notShowSubmit">
+      <div>
         <b-form-input
           id="input-1"
           v-model="form.email"
@@ -34,37 +34,7 @@
           required
         />
       </div>
-      <div v-if="showSubmit">
-        <div class="d-flex justify-content-center">
-          <b-form-group v-slot="{ ariaDescribedby }" label="Select Genre">
-            <b-form-checkbox-group
-              id="checkbox-group-2"
-              v-model="selected"
-              :aria-describedby="ariaDescribedby"
-              name="flavour-2"
-            >
-              <b-form-checkbox
-                v-for="genre in genresList"
-                :key="genre.id"
-                :value="genre.id"
-                class="d-inline-flex float-left"
-              >
-                {{ genre.name }}
-              </b-form-checkbox>
-            </b-form-checkbox-group>
-          </b-form-group>
-        </div>
-      </div>
-
-      <b-button v-if="notShowSubmit" variant="danger" @click="next">
-        Next
-      </b-button>
-
-      <b-button v-if="showSubmit" variant="danger" @click="prev">
-        Prev
-      </b-button>
-
-      <b-button v-if="showSubmit" type="submit" variant="success">
+      <b-button type="submit" variant="success">
         Submit
       </b-button>
     </b-form>
@@ -92,7 +62,7 @@ export default {
         name: '',
         password: ''
       },
-      genresList: [],
+      genresList: [1],
       selected: [],
       showSubmit: false,
       notShowSubmit: true,

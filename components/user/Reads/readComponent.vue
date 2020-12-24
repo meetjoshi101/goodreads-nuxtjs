@@ -1,19 +1,19 @@
 <template>
   <div class="col">
-    <div class="card my-4 mx-4">
+    <div class="card">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-2">
           <img :src="read.image" alt="book image">
         </div>
-        <div class="col-md-8">
+        <div class="col-md-10">
           <div class="card-body">
             <h6 class="card-title">
               {{ read.Title }}
             </h6>
             <p class="card-text">
-              {{ read.status }}
+              {{ status }}
             </p>
-            <div class="btn btn-primary">
+            <div v-if="!isComplete" class="btn btn-primary" @click="completeRead">
               Complete
             </div>
           </div>
@@ -33,11 +33,33 @@ export default {
       required: true
     }
   },
-  created () {
-    console.log(this.read)
+  computed: {
+    isComplete () {
+      if (this.read.status === 'C') {
+        return true
+      } else {
+        return false
+      }
+    },
+    status () {
+      if (this.read.status === 'C') {
+        return 'Completed'
+      } else {
+        return 'Reading'
+      }
+    }
+  },
+  methods: {
+    completeRead () {
+      this.$store.dispatch('completeRead', this.read.id)
+    }
   }
 }
 </script>
 
 <style scoped>
+.card{
+  min-width: 40vw;
+  max-width: 40vw;
+}
 </style>

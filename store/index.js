@@ -73,6 +73,9 @@ const createStore = () => {
       },
       SETREADSBOOKDATA (state, data) {
         state.readsBookData.push(data)
+      },
+      RESETREADSBOOKDATA (state) {
+        state.readsBookData = []
       }
     },
     getters: {
@@ -300,8 +303,12 @@ const createStore = () => {
           }
         )
       },
-      fetchReadsBookData ({ commit }, read) {
+      fetchReadsBookData ({ commit }, args) {
         let bookDataObj
+        const read = args.read
+        if (args.reLoad) {
+          commit('RESETREADSBOOKDATA')
+        }
         return this.$axios.$get(`/book/id/${read.book_id}`)
           .then((res) => {
             bookDataObj = {
@@ -315,6 +322,15 @@ const createStore = () => {
           }, (err) => {
             console.log(err)
           })
+      },
+      completeRead (context, readId) {
+        this.$axios.$patch('/read/read-complete', {
+          id: readId
+        }).then((res) => {
+          console.log(res)
+        }, (err) => {
+          console.log(err)
+        })
       }
     }
   })

@@ -48,11 +48,16 @@ export default {
       type: Object,
       default: null,
       required: true
+    },
+    isRead: {
+      type: Boolean,
+      default: false,
+      required: true
     }
   },
   computed: {
     isLogin () {
-      if (this.$store.state.Auth.token) {
+      if (this.$store.state.Auth.token && !this.isRead) {
         return true
       } else {
         return false
