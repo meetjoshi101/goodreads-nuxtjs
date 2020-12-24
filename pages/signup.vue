@@ -69,15 +69,6 @@ export default {
       showAlert: false
     }
   },
-  created () {
-    this.$axios
-      .$get('/genre')
-      .then((res) => {
-        this.genresList = res.genres
-      }, (err) => {
-        console.log(err)
-      })
-  },
   methods: {
     onSubmit (event) {
       let token
