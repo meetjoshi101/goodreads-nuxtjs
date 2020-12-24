@@ -331,6 +331,11 @@ const createStore = () => {
         }, (err) => {
           console.log(err)
         })
+      },
+      addRead ({ dispatch }, bookId) {
+        this.$axios.$post('/read/add-read', {
+          book_id: bookId
+        }).then(res => console.log(res), err => console.log(err))
       }
     }
   })

@@ -13,6 +13,7 @@ export default {
   layout: 'booklayout',
   async asyncData ({ store, route }) {
     await store.dispatch('fetchBookByIsbn', route.params.isbn)
+    await store.dispatch('fetchReads')
   },
   computed: {
     book () {

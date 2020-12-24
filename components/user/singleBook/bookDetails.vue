@@ -29,8 +29,8 @@
       </svg>
     </div>
     <div class="button-margin">
-      <b-button v-if="isLogin" class="start-read-button">
-        Start Read
+      <b-button v-if="isLogin" class="start-read-button" @click="addRead">
+        Start Reading
       </b-button>
     </div>
   </div>
@@ -62,6 +62,12 @@ export default {
       } else {
         return false
       }
+    }
+  },
+  methods: {
+    addRead () {
+      // eslint-disable-next-line no-console
+      this.$store.dispatch('addRead', this.book.id)
     }
   }
 }
