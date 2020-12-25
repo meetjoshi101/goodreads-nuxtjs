@@ -16,6 +16,9 @@
             <div v-if="!isComplete" class="btn btn-primary" @click="completeRead">
               Complete
             </div>
+            <div v-if="isComplete" class="btn btn-danger" @click="deleteRead">
+              Delete
+            </div>
           </div>
         </div>
       </div>
@@ -52,6 +55,9 @@ export default {
   methods: {
     completeRead () {
       this.$store.dispatch('completeRead', this.read.id)
+    },
+    async deleteRead () {
+      await this.$store.dispatch('deleteRead', this.read.id)
     }
   }
 }

@@ -17,6 +17,11 @@
                 My Reads
               </nuxt-link>
             </b-nav-item>
+            <b-nav-item v-if="isLogin">
+              <nuxt-link to="/my-review" class="nav-link">
+                My Reviews
+              </nuxt-link>
+            </b-nav-item>
           </b-navbar-nav>
           <!-- Right aligned nav items -->
           <b-navbar-nav class="ml-auto">

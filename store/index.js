@@ -32,6 +32,7 @@ const createStore = () => {
       users: [],
       reads: [],
       readsBookData: [],
+      userReview: [],
       book: null,
       genre: null
     }),
@@ -76,6 +77,9 @@ const createStore = () => {
       },
       RESETREADSBOOKDATA (state) {
         state.readsBookData = []
+      },
+      SETUSERREVIEW (state, reviews) {
+        state.userReview = reviews
       }
     },
     getters: {
@@ -102,6 +106,9 @@ const createStore = () => {
       },
       getReadsBookData: state => () => {
         return state.readsBookData
+      },
+      getUserReview: state => () => {
+        return state.userReview
       }
     },
     actions: {
@@ -172,7 +179,6 @@ const createStore = () => {
         )
       },
       fetchGenreById ({ commit }, id) {
-        console.log('fetch genre by id')
         return this.$axios.$get(`/genre/${id}`).then(
           (res) => {
             commit('SETGENREBYID', res.genre[0])
@@ -323,11 +329,12 @@ const createStore = () => {
             console.log(err)
           })
       },
-      completeRead (context, readId) {
+      completeRead ({ dispatch }, readId) {
         this.$axios.$patch('/read/read-complete', {
           id: readId
         }).then((res) => {
           console.log(res)
+          dispatch('fetchReads')
         }, (err) => {
           console.log(err)
         })
@@ -336,6 +343,24 @@ const createStore = () => {
         this.$axios.$post('/read/add-read', {
           book_id: bookId
         }).then(res => console.log(res), err => console.log(err))
+      },
+      deleteRead ({ dispatch }, readId) {
+        return this.$axios.$delete(`/read/delete/${readId}`).then(async (res) => {
+          console.log(res)
+          await dispatch('fetchReads')
+        }, (err) => {
+          console.log(err)
+        })
+      },
+
+      //! Review Apis
+
+      fetchUserReview ({ commit }) {
+        return this.$axios.$get('/review/user-book').then((res) => {
+          commit('SETUSERREVIEW', res.reviews)
+        }, (err) => {
+          console.log(err)
+        })
       }
     }
   })
