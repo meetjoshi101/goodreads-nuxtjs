@@ -35,7 +35,6 @@
 </template>
 
 <script>
-/* eslint-disable no-console */
 export default {
   props: {
     read: {
@@ -68,7 +67,6 @@ export default {
     showAddReview () {
       let isTrue = true
       const array = this.$store.getters.getReviewRead()
-      console.log(array)
       array.forEach((review) => {
         if (review === this.read.id) {
           isTrue = false
