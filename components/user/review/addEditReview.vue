@@ -21,6 +21,19 @@
             :state="commentState"
             required
           />
+          <b-form-group
+            label="Rating"
+            label-for="rating-input"
+            invalid-feedback="rating is required"
+            :state="ratingState"
+          >
+            <b-form-input
+              id="rating-input"
+              v-model="rating"
+              :state="ratingState"
+              required
+            />
+          </b-form-group>
         </b-form-group>
       </form>
     </b-modal>
@@ -28,6 +41,8 @@
 </template>
 
 <script>
+/* eslint-disable no-console */
+
 export default {
 
   props: {
@@ -40,10 +55,22 @@ export default {
   data () {
     return {
       comment: '',
-      commentState: null
+      commentState: null,
+      rating: 0,
+      ratingState: null
+    }
+  },
+  methods: {
+    resetModal () {
+      this.commentState = null
+      this.comment = ''
+      this.rating = 0
+      this.ratingState = null
+    },
+    handleOk () {
+      console.log(this.comment)
     }
   }
-
 }
 </script>
 

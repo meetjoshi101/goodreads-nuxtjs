@@ -33,6 +33,7 @@ const createStore = () => {
       reads: [],
       readsBookData: [],
       userReview: [],
+      reviewRead: [],
       book: null,
       genre: null
     }),
@@ -80,6 +81,15 @@ const createStore = () => {
       },
       SETUSERREVIEW (state, reviews) {
         state.userReview = reviews
+      },
+      REVIEWADDED (state, id) {
+        state.reviewRead.push(id)
+      },
+      SETREVIEWREAD (state, reviewRead) {
+        state.reviewRead = reviewRead
+      },
+      CLEARREVIEWREAD (state, reviewRead) {
+        state.reviewRead = []
       }
     },
     getters: {
@@ -109,7 +119,11 @@ const createStore = () => {
       },
       getUserReview: state => () => {
         return state.userReview
+      },
+      getReviewRead: state => () => {
+        return state.reviewRead
       }
+
     },
     actions: {
       nuxtServerInit ({ commit }, { req }) {
@@ -356,8 +370,46 @@ const createStore = () => {
       //! Review Apis
 
       fetchUserReview ({ commit }) {
+        const reviewReadId = []
         return this.$axios.$get('/review/user-book').then((res) => {
           commit('SETUSERREVIEW', res.reviews)
+          res.reviews.forEach((review) => {
+            reviewReadId.push(review.read_id)
+          })
+          commit('SETREVIEWREAD', reviewReadId)
+        }, (err) => {
+          console.log(err)
+        })
+      },
+      addReview ({ commit }, review) {
+        this.$axios.$post('/review/add-review',
+          {
+            read_id: review.id,
+            rating: review.rating,
+            comment: review.comment
+          }
+        ).then((res) => {
+          commit('REVIEWADDED', review.id)
+        }, (err) => {
+          console.log(err)
+        })
+      },
+      editReview ({ dispatch }, review) {
+        this.$axios.$patch(`/review/edit-review/${review.id}`,
+          {
+            rating: review.rating,
+            comment: review.comment
+          }
+        ).then((res) => {
+          console.log(res)
+          dispatch('fetchUserReview')
+        }, (err) => {
+          console.log(err)
+        })
+      },
+      deleteReview ({ dispatch }, id) {
+        this.$axios.$delete(`/review/delete/${id}`).then((res) => {
+          this.dispatch('fetchUserReview')
         }, (err) => {
           console.log(err)
         })
