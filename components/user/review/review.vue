@@ -39,7 +39,7 @@ export default {
   computed: {
     title () {
       const bookData = this.$store.getters.getReadsBookData()
-      const book = bookData.filter(book => book.id === this.data.read[0].book_id)
+      const book = bookData.filter(book => book.id === this.data.read[0].id)
       if (book[0]) {
         return book[0].Title
       } else {

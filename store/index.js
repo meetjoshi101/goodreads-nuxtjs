@@ -27,6 +27,9 @@ const createStore = () => {
         email: '',
         role: ''
       },
+      bookCount: null,
+      userCount: null,
+      genreCount: null,
       books: [],
       genres: [],
       users: [],
@@ -94,6 +97,15 @@ const createStore = () => {
       },
       SETBOOKREVIEW (state, reviews) {
         state.bookReview = reviews
+      },
+      SETUSERCOUNT (state, count) {
+        state.userCount = count
+      },
+      SETBOOKCOUNT (state, count) {
+        state.bookCount = count
+      },
+      SETGENRECOUNT (state, count) {
+        state.genreCount = count
       }
     },
     getters: {
@@ -132,6 +144,14 @@ const createStore = () => {
       },
       getBookReviewCount: state => () => {
         return state.bookReview.length
+      },
+      getDashbordData: state => () => {
+        const dashbordData = {
+          book: state.bookCount,
+          genre: state.genreCount,
+          user: state.userCount
+        }
+        return dashbordData
       }
 
     },
@@ -185,6 +205,38 @@ const createStore = () => {
         )
       },
 
+      //! admin Dashbord Apis
+
+      getBookCount ({ commit }) {
+        return this.$axios.$get('/book/get-book-count').then(
+          (res) => {
+            commit('SETBOOKCOUNT', res.count)
+          }, (err) => {
+            console.log(err)
+          }
+        )
+      },
+
+      getGenreCount ({ commit }) {
+        return this.$axios.$get('/genre/get-genre-count').then(
+          (res) => {
+            commit('SETGENRECOUNT', res.count)
+          }, (err) => {
+            console.log(err)
+          }
+        )
+      },
+
+      getUserCount ({ commit }) {
+        return this.$axios.$get('/user/get-user-count').then(
+          (res) => {
+            commit('SETUSERCOUNT', res.count)
+          }, (err) => {
+            console.log(err)
+          }
+        )
+      },
+
       //! admin Genres Apis
 
       fetchGenres ({ commit }) {
@@ -203,7 +255,7 @@ const createStore = () => {
         )
       },
       fetchGenreById ({ commit }, id) {
-        return this.$axios.$get(`/genre/${id}`).then(
+        return this.$axios.$get(`/genre/id/${id}`).then(
           (res) => {
             commit('SETGENREBYID', res.genre[0])
           },

@@ -303,10 +303,8 @@ export default {
         Author: this.author,
         Description: this.description,
         publication_Year: this.publicationYear,
-        'image-url':
-          'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg',
-        'image-url-s':
-          'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg'
+        Image_url: 'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg',
+        Image_URL_S: 'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg'
       }
       await this.$store.dispatch('editBook', bookObj)
       this.$bvModal.show('bookEdited')
@@ -334,6 +332,7 @@ export default {
         this.$store.dispatch('fetchBooks', { pageLimitArg: pageLimitObj })
       }
     },
+
     async addBook () {
       const bookObj = {
         Gener_id: this.selectedGenreId,
@@ -343,10 +342,8 @@ export default {
         Author: this.author,
         Description: this.description,
         publication_Year: this.publicationYear,
-        'image-url':
-          'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg',
-        'image-url-s':
-          'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg'
+        Image_url: 'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg',
+        Image_URL_S: 'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg'
       }
       await this.$store.dispatch('addBook', bookObj)
       this.$bvModal.show('bookAdded')

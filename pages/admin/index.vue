@@ -10,7 +10,7 @@
       >
         <b-card-text>
           <b-icon icon="book" />
-          10000
+          {{ dashBoarddata.book }}
         </b-card-text>
       </b-card>
       <b-card
@@ -21,7 +21,7 @@
       >
         <b-card-text>
           <b-icon-bookmark-heart-fill />
-          100
+          {{ dashBoarddata.genre }}
         </b-card-text>
       </b-card>
       <b-card
@@ -32,7 +32,7 @@
         align="center"
       >
         <b-card-text>
-          <b-icon-emoji-laughing />1000
+          <b-icon-emoji-laughing />{{ dashBoarddata.user }}
         </b-card-text>
       </b-card>
     </b-card-group>
@@ -45,8 +45,15 @@ export default {
     'adminAuthanticated'
   ],
   layout: 'default',
-  created () {
-    this.$axios.setToken(this.$store.state.Auth.token, 'Bearer')
+  async asyncData ({ store }) {
+    await store.dispatch('getBookCount')
+    await store.dispatch('getGenreCount')
+    await store.dispatch('getUserCount')
+  },
+  computed: {
+    dashBoarddata () {
+      return this.$store.getters.getDashbordData()
+    }
   }
 }
 </script>
