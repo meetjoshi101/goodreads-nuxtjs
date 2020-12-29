@@ -13,7 +13,7 @@
               </h6>
               <div class="card-text">
                 {{ status }}
-                <div v-if="!showAddReview">
+                <div v-if="!showAddReview && isComplete">
                   Reviewed
                 </div>
               </div>
@@ -72,7 +72,7 @@ export default {
           isTrue = false
         }
       })
-      return isTrue
+      return isTrue && this.isComplete
     }
   },
   methods: {
