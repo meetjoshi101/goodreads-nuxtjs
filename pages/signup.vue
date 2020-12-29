@@ -3,7 +3,7 @@
     <b-alert :show="showAlert" variant="danger">
       Auth Fail Please Enter Valid Values
     </b-alert>
-    <div class="h5 text-danger">
+    <div class="h4 mt-3 text-primary">
       Signup
     </div>
     <b-form @submit="onSubmit">
@@ -34,12 +34,12 @@
           required
         />
       </div>
-      <b-button type="submit" variant="success">
+      <b-button type="submit" class="form-control" variant="primary">
         Submit
       </b-button>
     </b-form>
     <nuxt-link to="/login" class="text-right">
-      <p class="my-4 signup-color">
+      <p class="mt-4 mb-2 signup-color">
         Have Account Click Here To Login
       </p>
     </nuxt-link>

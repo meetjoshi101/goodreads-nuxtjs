@@ -4,7 +4,7 @@
     <b-alert :show="showAlert" variant="danger">
       Auth Fail please enter correct Email and Password
     </b-alert>
-    <div class="h4 text-primary">
+    <div class="h4 mt-4 text-primary">
       Login
     </div>
     <b-form @submit="onSubmit">
@@ -24,7 +24,7 @@
         placeholder="Enter Password"
         required
       />
-      <b-button type="submit" variant="primary">
+      <b-button type="submit" class="form-control" variant="primary">
         Submit
       </b-button>
     </b-form>
@@ -94,9 +94,10 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .login-panel{
    max-width: 30vw;
+   height: 45vh;
 }
 .signup-color{
   color: rgb(138, 138, 138);
