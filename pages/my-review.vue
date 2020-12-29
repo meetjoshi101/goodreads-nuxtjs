@@ -63,6 +63,7 @@ import review from '~/components/user/review/review'
 /* eslint-disable no-console */
 export default {
   components: { review },
+  middleware: ['authanticated'],
   layout: 'booklayout',
   async asyncData ({ store }) {
     await store.dispatch('fetchUserReview')

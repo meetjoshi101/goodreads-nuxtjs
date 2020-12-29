@@ -50,6 +50,7 @@
 /* eslint-disable no-console */
 export default {
   layout: 'booklayout',
+  middleware: ['authanticated'],
   watchQuery: true,
   async asyncData ({ store }) {
     await store.dispatch('fetchUserReview')

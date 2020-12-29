@@ -1,5 +1,5 @@
-/* eslint-disable object-shorthand */
 /* eslint-disable no-console */
+/* eslint-disable object-shorthand */
 import Vuex from 'vuex'
 import jwt from 'jsonwebtoken'
 
@@ -33,6 +33,7 @@ const createStore = () => {
       reads: [],
       readsBookData: [],
       userReview: [],
+      bookReview: [],
       reviewRead: [],
       book: null,
       genre: null
@@ -90,6 +91,9 @@ const createStore = () => {
       },
       CLEARREVIEWREAD (state, reviewRead) {
         state.reviewRead = []
+      },
+      SETBOOKREVIEW (state, reviews) {
+        state.bookReview = reviews
       }
     },
     getters: {
@@ -122,6 +126,12 @@ const createStore = () => {
       },
       getReviewRead: state => () => {
         return state.reviewRead
+      },
+      getBookReview: state => () => {
+        return state.bookReview
+      },
+      getBookReviewCount: state => () => {
+        return state.bookReview.length
       }
 
     },
@@ -410,6 +420,17 @@ const createStore = () => {
       deleteReview ({ dispatch }, id) {
         this.$axios.$delete(`/review/delete/${id}`).then((res) => {
           this.dispatch('fetchUserReview')
+        }, (err) => {
+          console.log(err)
+        })
+      },
+      fetchBookReviews ({ commit }, bookid) {
+        console.log(bookid)
+        return this.$axios.$post('/review/book-review', {
+          bId: bookid
+        }).then((res) => {
+          console.log(res)
+          commit('SETBOOKREVIEW', res.reviews)
         }, (err) => {
           console.log(err)
         })
