@@ -35,7 +35,7 @@ export default {
     logout () {
       Cookie.remove('token')
       this.$store.commit('LOGOUT')
-      this.$router.replace('login')
+      this.$router.push({ path: '/login' })
     }
   }
 }

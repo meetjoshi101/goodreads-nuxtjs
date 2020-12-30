@@ -1,8 +1,8 @@
 <template>
   <div>
-    <b-modal id="askBookDelete" title="Are You Sure To Delete" @ok="Delete()">
+    <b-modal id="askBookDelete" title="Delete" @ok="Delete()">
       <p>
-        Are You Sure To Delete this Book?
+        Want To Delete this Book?
       </p>
     </b-modal>
     <b-modal id="bookDeleted" title="Deleted" cancel-disabled>
@@ -45,12 +45,7 @@
             label-for="ISBN-input"
             invalid-feedback="ISBN is required"
           >
-            <b-form-input
-              id="ISBN-input"
-              v-model="isbn"
-              :state="isbnState"
-              disabled
-            />
+            <b-form-input id="ISBN-input" v-model="isbn" disabled />
           </b-form-group>
         </div>
         <b-form-group
@@ -77,23 +72,6 @@
             id="title-input"
             v-model="title"
             :state="titleState"
-            required
-          />
-        </b-form-group>
-        <b-form-group
-          :state="descriptionState"
-          label="Description"
-          label-for="textarea"
-          invalid-feedback="Description is required"
-        >
-          <b-form-textarea
-            id="textarea"
-            v-model="description"
-            placeholder="Enter description of books..."
-            rows="3"
-            max-rows="6"
-            invalid-feedback="description is required"
-            :state="publicationYearState"
             required
           />
         </b-form-group>
@@ -125,18 +103,11 @@
           />
         </b-form-group>
         <b-form-group
-          :state="avgRatingState"
           label="Average Rating"
           label-for="avgRating-input"
-          invalid-feedback="Average Rating Year is required"
+          invalid-feedback="Average Rating is required"
         >
-          <b-form-input
-            id="avgRating-input"
-            v-model="avgRating"
-            :state="avgRatingState"
-            type="number"
-            required
-          />
+          <b-form-rating v-model="avgRating" variant="primary" class="mb-2" />
         </b-form-group>
         <b-dropdown
           id="dropdown-1"
@@ -155,6 +126,14 @@
       </form>
     </b-modal>
     <div class="d-flex justify-content-end mb-2">
+      <b-icon
+        v-if="s"
+        icon="x-circle"
+        style="height: 25px; width: 25px;"
+        class="mr-2"
+        variant="danger"
+        @click="clearSearch"
+      />
       <b-form-input
         v-model="s"
         size="sm"
@@ -181,7 +160,11 @@
           >
             Edit
           </b-button>
-          <b-button v-b-modal.askBookDelete variant="danger" @click="selectDelete(data.item.ISBN)">
+          <b-button
+            v-b-modal.askBookDelete
+            variant="danger"
+            @click="selectDelete(data.item.ISBN)"
+          >
             Delete
           </b-button>
         </b-button-group>
@@ -214,7 +197,8 @@ export default {
       const page = route.query.page || 1
       const limit = route.query.limit || 10
       const pageLimitObj = {
-        page, limit
+        page,
+        limit
       }
       await store.dispatch('fetchBooks', { pageLimitArg: pageLimitObj })
     }
@@ -237,14 +221,11 @@ export default {
       isbn: '',
       title: '',
       titleState: null,
-      description: '',
-      descriptionState: null,
       author: '',
       authorState: null,
       publicationYear: '',
       publicationYearState: null,
-      avgRatingState: null,
-      avgRating: 0,
+      avgRating: 1,
       isEdit: false,
       editISBN: null,
       selectedBook: null,
@@ -262,6 +243,10 @@ export default {
     }
   },
   methods: {
+    clearSearch () {
+      this.s = ''
+      this.$router.push('/admin/books')
+    },
     selectDelete (isbn) {
       this.selectDeleteIsbn = isbn
     },
@@ -284,9 +269,11 @@ export default {
       this.isEdit = false
     },
     search () {
-      this.$router.push(`/admin/books?search=${this.s}`)
-      this.isSearch = true
-      this.$store.dispatch('fetchBooks', this.s)
+      if (this.s) {
+        this.$router.push(`/admin/books?search=${this.s}`)
+        this.isSearch = true
+        this.$store.dispatch('fetchBooks', this.s)
+      }
     },
     edit (ISBN) {
       // eslint-disable-next-line no-console
@@ -301,15 +288,18 @@ export default {
         AvgRating: this.avgRating,
         Title: this.title,
         Author: this.author,
-        Description: this.description,
         publication_Year: this.publicationYear,
-        Image_url: 'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg',
-        Image_URL_S: 'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg'
+        Image_url:
+          'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg',
+        Image_URL_S:
+          'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg'
       }
       await this.$store.dispatch('editBook', bookObj)
       this.$bvModal.show('bookEdited')
       if (this.$route.query.search) {
-        this.$store.dispatch('fetchBooks', { search: this.$route.query.search })
+        this.$store.dispatch('fetchBooks', {
+          search: this.$route.query.search
+        })
       } else {
         const pageLimitObj = {
           page: this.page,
@@ -323,7 +313,9 @@ export default {
       await this.$store.dispatch('deleteBook', this.selectDeleteIsbn)
       this.$bvModal.show('bookDeleted')
       if (this.$route.query.search) {
-        this.$store.dispatch('fetchBooks', { search: this.$route.query.search })
+        this.$store.dispatch('fetchBooks', {
+          search: this.$route.query.search
+        })
       } else {
         const pageLimitObj = {
           page: this.page,
@@ -340,15 +332,18 @@ export default {
         AvgRating: this.avgRating,
         Title: this.title,
         Author: this.author,
-        Description: this.description,
         publication_Year: this.publicationYear,
-        Image_url: 'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg',
-        Image_URL_S: 'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg'
+        Image_url:
+          'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg',
+        Image_URL_S:
+          'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg'
       }
       await this.$store.dispatch('addBook', bookObj)
       this.$bvModal.show('bookAdded')
       if (this.$route.query.search) {
-        this.$store.dispatch('fetchBooks', { search: this.$route.query.search })
+        this.$store.dispatch('fetchBooks', {
+          search: this.$route.query.search
+        })
       } else {
         const pageLimitObj = {
           page: this.page,
@@ -358,37 +353,34 @@ export default {
       }
     },
     checkFormValidity () {
-      let valid = true
+      let valid = false
       if (this.isbn == '') {
         this.isbnState = false
-        valid = false
-      } else if (this.title == '') {
+      } else {
         this.isbnState = true
+      }
+      if (this.title == '') {
         this.titleState = false
-        valid = false
-      } else if (this.description == '') {
+      } else {
         this.titleState = true
-        this.descriptionState = false
-        valid = false
-      } else if (this.author == '') {
-        this.descriptionState = true
+      }
+      if (this.author == '') {
         this.authorState = false
-        valid = false
-      } else if (this.publicationYear == '' || this.publicationYear > 2020) {
+      } else {
         this.authorState = true
+      }
+      if (this.publicationYear == '' || this.publicationYear > 2021) {
         this.publicationYearState = false
-        valid = false
-      } else if (
-        this.avgRating == '' ||
-        this.avgRating > 5 ||
-        this.avgRating < 0
-      ) {
-        this.avgRatingState = false
-        valid = false
       } else {
         this.publicationYearState = true
-        valid = true
       }
+
+      if (this.isbnState && this.titleState && this.authorState && this.publicationYearState) {
+        valid = true
+      } else {
+        valid = false
+      }
+
       return valid
     },
     resetModal () {
@@ -401,8 +393,6 @@ export default {
         this.isbnState = null
         this.title = this.selectedBook.Title
         this.titleState = true
-        this.description = 'HI Dis'
-        this.descriptionState = true
         this.author = this.selectedBook.Author
         this.authorState = true
         this.publicationYear = this.selectedBook.publication_Year
@@ -416,13 +406,11 @@ export default {
         this.isbnState = null
         this.title = ''
         this.titleState = null
-        this.description = ''
-        this.descriptionState = null
         this.author = ''
         this.authorState = null
         this.publicationYear = ''
         this.publicationYearState = null
-        this.avgRating = 0
+        this.avgRating = 1
         this.avgRatingState = null
         this.selectedGenre = 'Art'
         this.selectedGenreId = 1

@@ -6,7 +6,7 @@
       @ok="Delete()"
     >
       <p>
-        Are You Sure To Delete genre?
+        Want To Genre this Book?
       </p>
     </b-modal>
     <b-modal

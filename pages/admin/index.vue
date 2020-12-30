@@ -32,7 +32,8 @@
         align="center"
       >
         <b-card-text>
-          <b-icon-emoji-laughing />{{ dashBoarddata.user }}
+          <b-icon-emoji-laughing />
+          {{ dashBoarddata.user }}
         </b-card-text>
       </b-card>
     </b-card-group>

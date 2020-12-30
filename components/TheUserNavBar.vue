@@ -30,6 +30,14 @@
           <!-- Right aligned nav items -->
           <b-navbar-nav class="ml-auto">
             <b-nav-form>
+              <b-icon
+                v-if="search"
+                icon="x-circle"
+                style="height: 25px; width: 25px;"
+                class="mr-2"
+                variant="danger"
+                @click="clearSearch"
+              />
               <b-form-input
                 v-model="search"
                 size="sm"
@@ -86,6 +94,10 @@ export default {
     }
   },
   methods: {
+    clearSearch () {
+      this.search = ''
+      this.$router.push({ path: this.$route.path })
+    },
     logout () {
       Cookie.remove('token')
       this.$store.commit('LOGOUT')
@@ -107,5 +119,8 @@ export default {
 .search-button {
   background-color: #20ce88;
   border: #20ce88;
+}
+a.nuxt-link-active {
+    color: #20ce88 !important;
 }
 </style>

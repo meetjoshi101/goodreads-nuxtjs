@@ -19,4 +19,9 @@
   color: #20ce88;
   font-weight: bold;
 }
+@media only screen and (max-width: 600px) {
+  .auth-style{
+    margin-left: 0px;
+  }
+}
 </style>

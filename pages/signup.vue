@@ -115,4 +115,11 @@ export default {
   color: rgb(138, 138, 138);
   font-size: 0.7rem;
 }
+
+@media only screen and (max-width: 600px) {
+  .login-panel{
+    max-width: 100%;
+    height: 300px;
+  }
+}
 </style>

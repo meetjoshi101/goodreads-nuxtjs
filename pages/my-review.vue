@@ -1,60 +1,65 @@
 <template>
-  <div class="row row-cols-md-3 g-0 mx-5 my-2">
-    <b-modal
-      id="delete-modal"
-      ref="delete-modal"
-      title="Sure Delete Review"
-      @ok="DeleteOk"
-    >
-      Sure Delete Review ?
-    </b-modal>
-    <b-modal
-      id="modal-prevent-closing"
-      ref="modal"
-      title="Edit Your Review"
-      @show="resetModal"
-      @hidden="resetModal"
-      @ok="handleOk"
-    >
-      <form ref="form" @submit.stop.prevent="handleSubmit">
-        <b-form-group
-          label="Comment"
-          label-for="comment-input"
-          invalid-feedback="comment is required"
-          :state="commentState"
-        >
-          <b-form-input
-            id="comment-input"
-            v-model="comment"
-            placeholder="Enter your comment"
+  <div>
+    <div class="h3 text-center py-2">
+      My Reads
+    </div>
+    <div class="row row-cols-md-3 g-0 mx-5 my-2">
+      <b-modal
+        id="delete-modal"
+        ref="delete-modal"
+        title="Sure Delete Review"
+        @ok="DeleteOk"
+      >
+        Sure Delete Review ?
+      </b-modal>
+      <b-modal
+        id="modal-prevent-closing"
+        ref="modal"
+        title="Edit Your Review"
+        @show="resetModal"
+        @hidden="resetModal"
+        @ok="handleOk"
+      >
+        <form ref="form" @submit.stop.prevent="handleSubmit">
+          <b-form-group
+            label="Comment"
+            label-for="comment-input"
+            invalid-feedback="comment is required"
             :state="commentState"
-            required
-          />
-        </b-form-group>
-        <b-form-group
-          label="Rating"
-          label-for="rating-input"
-          invalid-feedback="rating should be between 1 to 5"
-          :state="ratingState"
-        >
-          <b-form-input
-            id="rating-input"
-            v-model="rating"
-            type="number"
-            placeholder="Enter Rating"
+          >
+            <b-form-input
+              id="comment-input"
+              v-model="comment"
+              placeholder="Enter your comment"
+              :state="commentState"
+              required
+            />
+          </b-form-group>
+          <b-form-group
+            label="Rating"
+            label-for="rating-input"
+            invalid-feedback="rating should be between 1 to 5"
             :state="ratingState"
-            required
-          />
-        </b-form-group>
-      </form>
-    </b-modal>
-    <review
-      v-for="review in reviews"
-      :key="review.id"
-      :data="review"
-      @edit="editReview"
-      @delete="deleteReview"
-    />
+          >
+            <b-form-input
+              id="rating-input"
+              v-model="rating"
+              type="number"
+              placeholder="Enter Rating"
+              :state="ratingState"
+              required
+            />
+          </b-form-group>
+        </form>
+      </b-modal>
+      <review
+        v-for="review in reviews"
+        :key="review.id"
+        :data="review"
+        @edit="editReview"
+        @delete="deleteReview"
+      />
+    </div>
   </div>
 </template>
 
