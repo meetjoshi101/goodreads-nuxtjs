@@ -307,7 +307,7 @@ const createStore = () => {
 
       fetchBooks ({ commit }, args) {
         if (args.search) {
-          return this.$axios.$get(`/book?search=${args.search}`).then((res) => {
+          return this.$axios.$get(`/book?search=${args.search}&page=${args.page}&limit=${args.limit}`).then((res) => {
             commit('SETBOOKS', res.result)
           })
         } else {

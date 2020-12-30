@@ -170,7 +170,7 @@
         </b-button-group>
       </template>
     </b-table>
-    <b-button-group v-if="!isSearch">
+    <b-button-group>
       <b-button variant="dark" @click="prev">
         Prev
       </b-button>
@@ -191,15 +191,15 @@ export default {
   middleware: ['adminAuthanticated'],
   async asyncData ({ store, route, $router }) {
     await store.dispatch('fetchGenres')
+    const page = route.query.page || 1
+    const limit = route.query.limit || 10
+    const pageLimitObj = {
+      page,
+      limit
+    }
     if (route.query.search) {
-      await store.dispatch('fetchBooks', { search: route.query.search })
+      await store.dispatch('fetchBooks', { search: route.query.search, page, limit })
     } else {
-      const page = route.query.page || 1
-      const limit = route.query.limit || 10
-      const pageLimitObj = {
-        page,
-        limit
-      }
       await store.dispatch('fetchBooks', { pageLimitArg: pageLimitObj })
     }
   },
@@ -230,7 +230,6 @@ export default {
       editISBN: null,
       selectedBook: null,
       s: this.$route.query.search ? this.$route.query.search : '',
-      isSearch: false,
       selectDeleteIsbn: null
     }
   },
@@ -252,17 +251,43 @@ export default {
     },
     next () {
       this.page++
-      this.$router.push(`/admin/books?page=${this.page}&limit=${this.limit}`)
+      let query
+      console.log(this.$route)
+      if (this.$route.query.search) {
+        query = {
+          page: this.page,
+          limit: this.limit,
+          search: this.$route.query.search
+        }
+      } else {
+        query = {
+          page: this.page,
+          limit: this.limit
+        }
+      }
+      this.$router.push({ name: this.$route.name, query })
     },
     prev () {
       if (this.page > 1) {
         this.page--
-        this.$router.push(`/admin/books?page=${this.page}&limit=${this.limit}`)
+        let query
+        if (this.$route.query.search) {
+          query = {
+            page: this.page,
+            limit: this.limit,
+            search: this.$route.query.search
+          }
+        } else {
+          query = {
+            page: this.page,
+            limit: this.limit
+          }
+        }
+        this.$router.push({ name: this.$route.name, query })
       }
     },
     getBooks () {
       this.$router.push(`/admin/books?page=${this.page}&limit=${this.limit}`)
-      this.isSearch = false
       this.$store.dispatch('fetchBooks')
     },
     cancle () {
@@ -271,8 +296,12 @@ export default {
     search () {
       if (this.s) {
         this.$router.push(`/admin/books?search=${this.s}`)
-        this.isSearch = true
-        this.$store.dispatch('fetchBooks', this.s)
+        const args = {
+          search: this.s,
+          page: 1,
+          limit: 10
+        }
+        this.$store.dispatch('fetchBooks', args)
       }
     },
     edit (ISBN) {
