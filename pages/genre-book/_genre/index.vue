@@ -2,7 +2,7 @@
   <div>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
       <nuxt-link v-for="book in books" :key="book.id" :to="'/book/'+book.ISBN" class="col mb-4">
-        <TheBookcard
+        <the-book-card
           :image-src="book.Image_url"
           :title="book.Title"
           :author="book.Author"
@@ -22,14 +22,12 @@
 </template>
 
 <script>
-import TheBookcard from '../components/TheBookCard'
-
+import TheBookCard from '~/components/TheBookCard.vue'
+/* eslint-disable no-console */
 export default {
+  components: { TheBookCard },
   layout: 'users',
   watchQuery: true,
-  components: {
-    TheBookcard
-  },
   async asyncData ({ store, route, $router }) {
     await store.dispatch('fetchGenres')
     if (route.query.search) {
@@ -37,11 +35,13 @@ export default {
     } else {
       const page = route.query.page || 1
       const limit = route.query.limit || 9
-      const pageLimitObj = {
+      const genre = route.params.genre || 1
+      const argsObj = {
         page,
-        limit
+        limit,
+        genre
       }
-      await store.dispatch('fetchBooks', { pageLimitArg: pageLimitObj })
+      await store.dispatch('fetchBookByGenre', argsObj)
     }
   },
   data () {
