@@ -34,10 +34,8 @@ const createStore = () => {
       genres: [],
       users: [],
       reads: [],
-      readsBookData: [],
       userReview: [],
       bookReview: [],
-      reviewRead: [],
       book: null,
       genre: null
     }),
@@ -77,23 +75,8 @@ const createStore = () => {
       SETREADS (state, reads) {
         state.reads = reads
       },
-      SETREADSBOOKDATA (state, data) {
-        state.readsBookData.push(data)
-      },
-      RESETREADSBOOKDATA (state) {
-        state.readsBookData = []
-      },
       SETUSERREVIEW (state, reviews) {
         state.userReview = reviews
-      },
-      REVIEWADDED (state, id) {
-        state.reviewRead.push(id)
-      },
-      SETREVIEWREAD (state, reviewRead) {
-        state.reviewRead = reviewRead
-      },
-      CLEARREVIEWREAD (state, reviewRead) {
-        state.reviewRead = []
       },
       SETBOOKREVIEW (state, reviews) {
         state.bookReview = reviews
@@ -130,14 +113,8 @@ const createStore = () => {
       getReads: state => () => {
         return state.reads
       },
-      getReadsBookData: state => () => {
-        return state.readsBookData
-      },
       getUserReview: state => () => {
         return state.userReview
-      },
-      getReviewRead: state => () => {
-        return state.reviewRead
       },
       getBookReview: state => () => {
         return state.bookReview
@@ -363,7 +340,6 @@ const createStore = () => {
         )
       },
       fetchBookByIsbn ({ commit, dispatch }, ISBN) {
-        console.log(ISBN)
         return this.$axios.$get(`/book/isbn/${ISBN}`).then(
           async (res) => {
             commit('SETBOOKBYISBN', res.book[0])
@@ -385,38 +361,16 @@ const createStore = () => {
           }
         )
       },
-      fetchReadsBookData ({ commit }, args) {
-        let bookDataObj
-        const read = args.read
-        if (args.reLoad) {
-          commit('RESETREADSBOOKDATA')
-        }
-        return this.$axios.$get(`/book/id/${read.book_id}`)
-          .then((res) => {
-            bookDataObj = {
-              id: read.id,
-              status: read.status,
-              Title: res.book[0].Title,
-              Author: res.book[0].Author,
-              image: res.book[0].Image_url
-            }
-            commit('SETREADSBOOKDATA', bookDataObj)
-          }, (err) => {
-            console.log(err)
-          })
-      },
       completeRead ({ dispatch }, readId) {
-        this.$axios.$patch('/read/read-complete', {
+        return this.$axios.$patch('/read/read-complete', {
           id: readId
         }).then((res) => {
-          console.log(res)
-          dispatch('fetchReads')
         }, (err) => {
           console.log(err)
         })
       },
       addRead ({ dispatch }, bookId) {
-        this.$axios.$post('/read/add-read', {
+        return this.$axios.$post('/read/add-read', {
           book_id: bookId
         }).then(res => console.log(res), err => console.log(err))
       },
@@ -432,32 +386,27 @@ const createStore = () => {
       //! Review Apis
 
       fetchUserReview ({ commit }) {
-        const reviewReadId = []
         return this.$axios.$get('/review/user-book').then((res) => {
           commit('SETUSERREVIEW', res.reviews)
-          res.reviews.forEach((review) => {
-            reviewReadId.push(review.read_id)
-          })
-          commit('SETREVIEWREAD', reviewReadId)
         }, (err) => {
           console.log(err)
         })
       },
       addReview ({ commit }, review) {
-        this.$axios.$post('/review/add-review',
+        return this.$axios.$post('/review/add-review',
           {
             read_id: review.id,
             rating: review.rating,
             comment: review.comment
           }
         ).then((res) => {
-          commit('REVIEWADDED', review.id)
+          console.log(res)
         }, (err) => {
           console.log(err)
         })
       },
       editReview ({ dispatch }, review) {
-        this.$axios.$patch(`/review/edit-review/${review.id}`,
+        return this.$axios.$patch(`/review/edit-review/${review.id}`,
           {
             rating: review.rating,
             comment: review.comment
@@ -470,14 +419,13 @@ const createStore = () => {
         })
       },
       deleteReview ({ dispatch }, id) {
-        this.$axios.$delete(`/review/delete/${id}`).then((res) => {
+        return this.$axios.$delete(`/review/delete/${id}`).then((res) => {
           this.dispatch('fetchUserReview')
         }, (err) => {
           console.log(err)
         })
       },
       fetchBookReviews ({ commit }, bookid) {
-        console.log(bookid)
         return this.$axios.$post('/review/book-review', {
           bId: bookid
         }).then((res) => {

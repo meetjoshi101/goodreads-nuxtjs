@@ -30,17 +30,8 @@
           <b-form-group
             label="Rating"
             label-for="rating-input"
-            invalid-feedback="rating should be between 1 to 5"
-            :state="ratingState"
           >
-            <b-form-input
-              id="rating-input"
-              v-model="rating"
-              type="number"
-              placeholder="Enter Rating"
-              :state="ratingState"
-              required
-            />
+            <b-form-rating id="rating-input" v-model="rating" variant="primary" class="mb-2" />
           </b-form-group>
         </form>
       </b-modal>
@@ -60,28 +51,18 @@ export default {
   async asyncData ({ store }) {
     await store.dispatch('fetchUserReview')
     await store.dispatch('fetchReads')
-    const reads = store.state.reads
-    let reLoad = true
-    for (let i = 0; i < reads.length; i++) {
-      await store.dispatch('fetchReadsBookData', {
-        read: reads[i],
-        reLoad
-      })
-      reLoad = false
-    }
   },
   data () {
     return {
       comment: '',
       commentState: null,
-      rating: null,
-      ratingState: null,
+      rating: 1,
       readId: null
     }
   },
   computed: {
     readBook () {
-      return this.$store.getters.getReadsBookData()
+      return this.$store.getters.getReads()
     }
   },
   methods: {
@@ -92,7 +73,7 @@ export default {
     resetModal () {
       this.commentState = null
       this.comment = ''
-      this.rating = null
+      this.rating = 1
       this.ratingState = null
     },
     validate () {
@@ -105,11 +86,7 @@ export default {
         validate = true
       }
       if (!this.rating || this.rating > 5 || this.rating < 1) {
-        this.ratingState = false
-        validate = false
-      } else {
-        this.ratingState = true
-        validate = true
+        this.rating = 1
       }
       return validate
     },
@@ -125,7 +102,9 @@ export default {
         comment: this.comment,
         id: this.readId
       }
-      this.$store.dispatch('addReview', review)
+      this.$store.dispatch('addReview', review).then(async () => {
+        await this.$store.dispatch('fetchUserReview')
+      })
       this.$nextTick(() => {
         this.$bvModal.hide('modal-prevent-closing')
       })

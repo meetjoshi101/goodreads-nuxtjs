@@ -28,7 +28,6 @@ export default {
   layout: 'booklayout',
   async asyncData ({ store, route }) {
     // eslint-disable-next-line no-console
-    console.log('async Data')
     await store.dispatch('fetchReads')
     await store.dispatch('fetchBookByIsbn', route.params.isbn)
     const book = store.getters.getBook()

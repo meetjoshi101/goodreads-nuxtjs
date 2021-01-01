@@ -2,7 +2,7 @@
   <div class="col">
     <div class="card">
       <h5 class="card-header">
-        {{ title }}
+        {{ data.book }}
       </h5>
       <div class="card-body">
         <h5 class="card-title">
@@ -36,20 +36,8 @@ export default {
       required: true
     }
   },
-  computed: {
-    title () {
-      const bookData = this.$store.getters.getReadsBookData()
-      const book = bookData.filter(book => book.id === this.data.read[0].id)
-      if (book[0]) {
-        return book[0].Title
-      } else {
-        return 'Book Title'
-      }
-    }
-  },
   methods: {
     editReview () {
-      console.log('edit: ' + this.data.id)
       this.$emit('edit', this.data.id)
     },
     deleteReview () {

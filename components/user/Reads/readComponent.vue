@@ -51,6 +51,7 @@ export default {
   },
   computed: {
     isComplete () {
+      // eslint-disable-next-line no-console
       if (this.read.status === 'C') {
         return true
       } else {
@@ -66,9 +67,9 @@ export default {
     },
     showAddReview () {
       let isTrue = true
-      const array = this.$store.getters.getReviewRead()
+      const array = this.$store.getters.getUserReview()
       array.forEach((review) => {
-        if (review === this.read.id) {
+        if (review.read_id === this.read.id) {
           isTrue = false
         }
       })

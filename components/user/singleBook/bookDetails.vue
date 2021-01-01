@@ -12,9 +12,6 @@
     <div class="h6">
       {{ book.publication_Year }}
     </div>
-    <div class="h4">
-      {{ genre.name }}
-    </div>
     <div class="h5 text-secondary d-flex">
       {{ book.AvgRating }}
       <svg
@@ -44,20 +41,20 @@ export default {
       default: null,
       required: true
     },
-    genre: {
-      type: Object,
-      default: null,
-      required: true
-    },
     isRead: {
       type: Boolean,
       default: false,
       required: true
     }
   },
+  data () {
+    return {
+      isReadComplete: false
+    }
+  },
   computed: {
     isLogin () {
-      if (this.$store.state.Auth.token && !this.isRead) {
+      if (this.$store.state.Auth.token && !this.isRead && !this.isReadComplete) {
         return true
       } else {
         return false
@@ -66,8 +63,9 @@ export default {
   },
   methods: {
     addRead () {
-      // eslint-disable-next-line no-console
-      this.$store.dispatch('addRead', this.book.id)
+      this.$store.dispatch('addRead', this.book.id).then(() => {
+        this.isReadComplete = true
+      })
     }
   }
 }

@@ -38,17 +38,8 @@
           <b-form-group
             label="Rating"
             label-for="rating-input"
-            invalid-feedback="rating should be between 1 to 5"
-            :state="ratingState"
           >
-            <b-form-input
-              id="rating-input"
-              v-model="rating"
-              type="number"
-              placeholder="Enter Rating"
-              :state="ratingState"
-              required
-            />
+            <b-form-rating id="rating-input" v-model="rating" variant="primary" class="mb-2" />
           </b-form-group>
         </form>
       </b-modal>
@@ -72,23 +63,12 @@ export default {
   layout: 'booklayout',
   async asyncData ({ store }) {
     await store.dispatch('fetchUserReview')
-    await store.dispatch('fetchReads')
-    const reads = store.state.reads
-    let reLoad = true
-    for (let i = 0; i < reads.length; i++) {
-      await store.dispatch('fetchReadsBookData', {
-        read: reads[i],
-        reLoad
-      })
-      reLoad = false
-    }
   },
   data () {
     return {
       comment: '',
       commentState: null,
-      rating: null,
-      ratingState: null,
+      rating: 1,
       reviewId: null,
       deleteId: null
     }
@@ -101,7 +81,6 @@ export default {
   methods: {
     editReview (id) {
       this.reviewId = id
-      console.log('edit: ' + this.reviewId)
       this.$refs.modal.show()
     },
     deleteReview (id) {
