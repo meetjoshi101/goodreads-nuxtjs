@@ -286,10 +286,6 @@ export default {
         this.$router.push({ name: this.$route.name, query })
       }
     },
-    getBooks () {
-      this.$router.push(`/admin/books?page=${this.page}&limit=${this.limit}`)
-      this.$store.dispatch('fetchBooks')
-    },
     cancle () {
       this.isEdit = false
     },
@@ -305,8 +301,6 @@ export default {
       }
     },
     edit (ISBN) {
-      // eslint-disable-next-line no-console
-      console.log(ISBN)
       this.isEdit = true
       this.editISBN = ISBN
     },
