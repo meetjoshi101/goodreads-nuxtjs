@@ -36,6 +36,7 @@
       <form
         ref="form"
         title="Scrollable Content"
+        encrypt="multipart/form-data"
         @submit.stop.prevent="handleSubmit"
       >
         <div v-if="isEdit">
@@ -109,6 +110,13 @@
         >
           <b-form-rating v-model="avgRating" variant="primary" class="mb-2" />
         </b-form-group>
+        <b-form-file
+          v-model="bookImage"
+          :state="Boolean(bookImage)"
+          placeholder="Drop book image here..."
+          drop-placeholder="Drop image here..."
+          accept="image/*"
+        />
         <b-dropdown
           id="dropdown-1"
           :text="selectedGenre"
@@ -230,7 +238,8 @@ export default {
       editISBN: null,
       selectedBook: null,
       s: this.$route.query.search ? this.$route.query.search : '',
-      selectDeleteIsbn: null
+      selectDeleteIsbn: null,
+      bookImage: ''
     }
   },
   computed: {
@@ -447,14 +456,20 @@ export default {
     },
     handleSubmit () {
       // Exit when the form isn't valid
-      if (!this.checkFormValidity()) {
-        return
-      }
-      // Push the name to submitted names
-      if (this.isEdit) {
-        this.editBook()
-      } else {
-        this.addBook()
+      // if (!this.checkFormValidity()) {
+      //   return
+      // }
+      // if (this.isEdit) {
+      //   this.editBook()
+      // } else {
+      //   this.addBook()
+      // }
+      const formData = new FormData()
+      formData.append('file', this.bookImage)
+      try {
+        this.$axios.$post('/upload', formData)
+      } catch (e) {
+        console.log(e)
       }
       // Hide the modal manually
       this.$nextTick(() => {
