@@ -108,7 +108,13 @@
           label-for="avgRating-input"
           invalid-feedback="Average Rating is required"
         >
-          <b-form-rating v-model="avgRating" variant="primary" class="mb-2" />
+          <b-form-input
+            id="publicationYear-input"
+            v-model="avgRating"
+            :state="avgRatingState"
+            type="number"
+            required
+          />
         </b-form-group>
         <b-form-file
           v-model="bookImage"
@@ -234,6 +240,7 @@ export default {
       publicationYear: '',
       publicationYearState: null,
       avgRating: 1,
+      avgRatingState: null,
       isEdit: false,
       editISBN: null,
       selectedBook: null,

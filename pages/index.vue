@@ -10,7 +10,7 @@
         />
       </nuxt-link>
     </div>
-    <b-button-group v-if="isSearch">
+    <b-button-group>
       <b-button variant="dark" @click="prev">
         Prev
       </b-button>
@@ -23,7 +23,7 @@
 
 <script>
 import TheBookcard from '../components/TheBookCard'
-
+import queryGenerator from '../static/js/queryGenerator'
 export default {
   layout: 'users',
   watchQuery: true,
@@ -31,6 +31,9 @@ export default {
     TheBookcard
   },
   async asyncData ({ store, route, $router }) {
+    const query = queryGenerator(route.query)
+    // eslint-disable-next-line no-console
+    console.log(query)
     await store.dispatch('fetchGenres')
     if (route.query.search) {
       await store.dispatch('fetchBooks', { search: route.query.search })

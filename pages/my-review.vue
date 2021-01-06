@@ -47,6 +47,7 @@
         v-for="review in reviews"
         :key="review.id"
         :data="review"
+        class="review"
         @edit="editReview"
         @delete="deleteReview"
       />
@@ -136,4 +137,8 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+.review {
+  margin-bottom: 20px;
+}
+</style>

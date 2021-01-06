@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 <template>
   <div>
     <div>
@@ -24,6 +25,11 @@
             <b-nav-item v-if="isLogin">
               <nuxt-link to="/my-review" class="nav-link">
                 My Reviews
+              </nuxt-link>
+            </b-nav-item>
+            <b-nav-item v-if="isAdmin">
+              <nuxt-link to="/admin" class="nav-link">
+                Admin Dashbord
               </nuxt-link>
             </b-nav-item>
           </b-navbar-nav>
@@ -91,6 +97,13 @@ export default {
       } else {
         return false
       }
+    },
+    isAdmin () {
+      if (this.$store.state.Auth.token && this.$store.state.Auth.role === 'A') {
+        return true
+      } else {
+        return false
+      }
     }
   },
   methods: {
@@ -112,6 +125,7 @@ export default {
 <style scoped>
 .title {
   color: #20ce88;
+  font-size: 2rem;
 }
 .nav-link {
   color: grey;
