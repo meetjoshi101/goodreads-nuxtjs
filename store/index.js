@@ -2,7 +2,7 @@
 /* eslint-disable object-shorthand */
 import Vuex from 'vuex'
 import jwt from 'jsonwebtoken'
-
+import queryGenerator from '../static/js/queryGenerator'
 const cookieparser = process.server ? require('cookieparser') : undefined
 
 const compareObjects = (object1, object2, key) => {
@@ -282,23 +282,18 @@ const createStore = () => {
 
       //! admin Books Apis
 
-      fetchBooks ({ commit }, args) {
-        if (args.search) {
-          return this.$axios.$get(`/book?search=${args.search}&page=${args.page}&limit=${args.limit}`).then((res) => {
-            commit('SETBOOKS', res.result)
-          })
-        } else {
-          return this.$axios
-            .$get(`/book?page=${args.pageLimitArg.page}&limit=${args.pageLimitArg.limit}`)
-            .then(
-              (res) => {
-                commit('SETBOOKS', res.book)
-              },
-              (err) => {
-                console.log(err)
-              }
-            )
-        }
+      fetchBooks ({ commit }, queryObj) {
+        const query = queryGenerator(queryObj)
+        return this.$axios
+          .$get('/book?' + query)
+          .then(
+            (res) => {
+              commit('SETBOOKS', res.book)
+            },
+            (err) => {
+              console.log(err)
+            }
+          )
       },
       addBook (context, bookObj) {
         return this.$axios.$post('book/add-book', bookObj).then(

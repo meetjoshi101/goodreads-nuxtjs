@@ -148,59 +148,71 @@
         </b-dropdown>
       </form>
     </b-modal>
-    <div class="d-flex justify-content-end mb-2">
-      <b-icon
-        v-if="s"
-        icon="x-circle"
-        style="height: 25px; width: 25px;"
-        class="mr-2"
-        variant="danger"
-        @click="clearSearch"
-      />
-      <b-form-input
-        v-model="s"
-        size="sm"
-        class="mr-sm-2"
-        style="max-width: 20vw;"
-        placeholder="Search"
-      />
-      <b-button size="sm" class="my-2 my-sm-0 mx-2" @click="search">
-        Search
-      </b-button>
+    <div v-if="items.length !== 0">
+      <div class="d-flex justify-content-end mb-2">
+        <b-icon
+          v-if="s"
+          icon="x-circle"
+          style="height: 25px; width: 25px;"
+          class="mr-2"
+          variant="danger"
+          @click="clearSearch"
+        />
+        <b-form-input
+          v-model="s"
+          size="sm"
+          class="mr-sm-2"
+          style="max-width: 20vw;"
+          placeholder="Search"
+        />
+        <b-button size="sm" class="my-2 my-sm-0 mx-2" @click="search">
+          Search
+        </b-button>
+      </div>
+      <div class="float-right mb-2">
+        <b-button v-b-modal.modal-scrollable variant="info">
+          Add Book
+        </b-button>
+      </div>
+      <b-table striped hover :items="items" :fields="fields">
+        <template #cell(Utility)="data">
+          <b-button-group>
+            <b-button
+              v-b-modal.modal-scrollable
+              variant="info"
+              @click="edit(data.item.ISBN)"
+            >
+              Edit
+            </b-button>
+            <b-button
+              v-b-modal.askBookDelete
+              variant="danger"
+              @click="selectDelete(data.item.ISBN)"
+            >
+              Delete
+            </b-button>
+          </b-button-group>
+        </template>
+      </b-table>
+      <b-button-group>
+        <b-button variant="dark" @click="prev">
+          Prev
+        </b-button>
+        <b-button variant="success" @click="next">
+          Next
+        </b-button>
+      </b-button-group>
     </div>
-    <div class="float-right mb-2">
-      <b-button v-b-modal.modal-scrollable variant="info">
-        Add Book
-      </b-button>
+    <div v-if="items.length === 0" class="d-flex flex-column">
+      <div>
+        Sorry No Books Available
+      </div>
+      <nuxt-link to="/admin/books">
+        <b-button variant="success">
+          Go to Home
+        </b-button>
+      </nuxt-link>
     </div>
-    <b-table striped hover :items="items" :fields="fields">
-      <template #cell(Utility)="data">
-        <b-button-group>
-          <b-button
-            v-b-modal.modal-scrollable
-            variant="info"
-            @click="edit(data.item.ISBN)"
-          >
-            Edit
-          </b-button>
-          <b-button
-            v-b-modal.askBookDelete
-            variant="danger"
-            @click="selectDelete(data.item.ISBN)"
-          >
-            Delete
-          </b-button>
-        </b-button-group>
-      </template>
-    </b-table>
-    <b-button-group>
-      <b-button variant="dark" @click="prev">
-        Prev
-      </b-button>
-      <b-button variant="success" @click="next">
-        Next
-      </b-button>
-    </b-button-group>
   </div>
 </template>
 
@@ -216,19 +228,14 @@ export default {
     await store.dispatch('fetchGenres')
     const page = route.query.page || 1
     const limit = route.query.limit || 10
-    const pageLimitObj = {
+    const query = {
       page,
       limit
     }
     if (route.query.search) {
-      await store.dispatch('fetchBooks', {
-        search: route.query.search,
-        page,
-        limit
-      })
-    } else {
-      await store.dispatch('fetchBooks', { pageLimitArg: pageLimitObj })
+      query.search = route.query.search
     }
+    await store.dispatch('fetchBooks', query)
   },
   data () {
     return {

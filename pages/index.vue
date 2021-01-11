@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
+    <div v-if="books.length !== 0" class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
       <nuxt-link v-for="book in books" :key="book.id" :to="'/book/'+book.ISBN" class="col mb-4">
         <TheBookcard
           :image-src="book.Image_url"
@@ -10,7 +10,15 @@
         />
       </nuxt-link>
     </div>
-    <b-button-group>
+    <div v-if="books.length === 0">
+      No Books
+      <nuxt-link to="/">
+        <b-button variant="success">
+          Go to Home
+        </b-button>
+      </nuxt-link>
+    </div>
+    <b-button-group v-if="books.length !== 0">
       <b-button variant="dark" @click="prev">
         Prev
       </b-button>
@@ -23,7 +31,6 @@
 
 <script>
 import TheBookcard from '../components/TheBookCard'
-import queryGenerator from '../static/js/queryGenerator'
 export default {
   layout: 'users',
   watchQuery: true,
@@ -31,21 +38,15 @@ export default {
     TheBookcard
   },
   async asyncData ({ store, route, $router }) {
-    const query = queryGenerator(route.query)
-    // eslint-disable-next-line no-console
-    console.log(query)
+    const queryObj = {
+      page: route.query.page || 1,
+      limit: route.query.limit || 9
+    }
     await store.dispatch('fetchGenres')
     if (route.query.search) {
-      await store.dispatch('fetchBooks', { search: route.query.search })
-    } else {
-      const page = route.query.page || 1
-      const limit = route.query.limit || 9
-      const pageLimitObj = {
-        page,
-        limit
-      }
-      await store.dispatch('fetchBooks', { pageLimitArg: pageLimitObj })
+      queryObj.search = route.query.search
     }
+    await store.dispatch('fetchBooks', queryObj)
   },
   data () {
     return {
@@ -62,12 +63,26 @@ export default {
   methods: {
     next () {
       this.page++
-      this.$router.push(`?page=${this.page}&limit=${this.limit}`)
+      const query = {
+        page: this.page,
+        limit: this.limit
+      }
+      if (this.$route.query.search) {
+        query.search = this.$route.query.search
+      }
+      this.$router.push({ name: this.$route.name, query })
     },
     prev () {
       if (this.page > 1) {
         this.page--
-        this.$router.push(`?page=${this.page}&limit=${this.limit}`)
+        const query = {
+          page: this.page,
+          limit: this.limit
+        }
+        if (this.$route.query.search) {
+          query.search = this.$route.query.search
+        }
+        this.$router.push({ name: this.$route.name, query })
       }
     }
   }
