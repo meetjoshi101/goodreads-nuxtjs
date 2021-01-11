@@ -93,7 +93,7 @@
           :state="publicationYearState"
           label="Publication Year"
           label-for="publicationYear-input"
-          invalid-feedback="publication Year is required"
+          :invalid-feedback="publicationYearMessage"
         >
           <b-form-input
             id="publicationYear-input"
@@ -106,7 +106,7 @@
         <b-form-group
           label="Average Rating"
           label-for="avgRating-input"
-          invalid-feedback="Average Rating is required"
+          :invalid-feedback="avgRatingMessage"
         >
           <b-form-input
             id="avgRating-input"
@@ -116,14 +116,19 @@
             required
           />
         </b-form-group>
-        <b-form-file
-          v-model="bookImage"
-          :state="Boolean(bookImage)"
-          placeholder="Drop book image here..."
-          drop-placeholder="Drop image here..."
-          accept="image/*"
-        />
-        <b-button size="md" :disabled="isUpload" variant="success" @click="uploadImage">
+        <div class="preview-image-container d-flex align-items-end">
+          <img v-if="imageUrl" :src="imageUrl" class="m-1">
+
+          <b-form-file
+            v-model="bookImage"
+            :state="Boolean(bookImage)"
+            class="m-1"
+            placeholder="Drop book image here..."
+            drop-placeholder="Drop image here..."
+            accept="image/*"
+          />
+        </div>
+        <b-button v-if="showButton" size="md" :disabled="isUpload" variant="success" @click="uploadImage">
           <div v-if="!isUpload">
             Upload
           </div>
@@ -218,7 +223,6 @@
 
 <script>
 /* eslint-disable no-labels */
-/* eslint-disable no-console */
 /* eslint-disable eqeqeq */
 export default {
   watchQuery: true,
@@ -269,10 +273,19 @@ export default {
       bookImage: null,
       imageUrl: '',
       isLoading: false,
-      disable: false
+      disable: false,
+      publicationYearMessage: 'Publication Year Is Required',
+      avgRatingMessage: 'Average Rating is Required'
     }
   },
   computed: {
+    showButton () {
+      if (this.bookImage) {
+        return true
+      } else {
+        return false
+      }
+    },
     genres () {
       return this.$store.getters.getGenres()
     },
@@ -452,10 +465,22 @@ export default {
       } else {
         this.authorState = true
       }
-      if (this.publicationYear == '' || this.publicationYear > 2021) {
+      if (this.publicationYear == '') {
         this.publicationYearState = false
+      } else if (this.publicationYear > 2021) {
+        this.publicationYearState = false
+        this.publicationYearMessage = 'Publication Year Must be less than or equal to current Year'
       } else {
         this.publicationYearState = true
+      }
+
+      if (this.avgRating === null) {
+        this.avgRatingState = false
+      } else if (this.avgRating < 1 || this.avgRating > 5) {
+        this.avgRatingState = false
+        this.avgRatingMessage = 'The Rating must be between 1 and 5'
+      } else {
+        this.avgRatingState = true
       }
 
       if (
@@ -463,7 +488,8 @@ export default {
         this.titleState &&
         this.authorState &&
         this.publicationYearState &&
-        this.imageUrl
+        this.imageUrl &&
+        this.avgRatingState
       ) {
         valid = true
       } else {
@@ -545,8 +571,7 @@ export default {
           this.isLoading = false
           this.disable = true
         },
-        (err) => {
-          console.log(err)
+        () => {
           this.isLoading = false
         }
       )
@@ -559,5 +584,11 @@ export default {
 .my-class /deep/ .dropdown-menu {
   max-height: 200px;
   overflow-y: auto;
+}
+.preview-image-container{
+  width: 100%;
+  background-color: rgb(243, 243, 243);
+  margin-top: 20px;
+  margin-bottom: 5px;
 }
 </style>

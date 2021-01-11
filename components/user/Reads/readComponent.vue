@@ -20,9 +20,6 @@
               <div v-if="!isComplete" class="btn btn-primary" @click="completeRead">
                 Complete
               </div>
-              <!--<div v-if="isComplete" class="btn btn-danger" @click="deleteRead">
-                Delete
-              </div>-->
               <div v-if="showAddReview" class="btn btn-primary" @click="addReview">
                 Add Review
               </div>
@@ -46,13 +43,13 @@ export default {
   data () {
     return {
       comment: '',
-      commentState: null
+      commentState: null,
+      isCompleteState: false
     }
   },
   computed: {
     isComplete () {
-      // eslint-disable-next-line no-console
-      if (this.read.status === 'C') {
+      if (this.read.status === 'C' || this.isCompleteState) {
         return true
       } else {
         return false
@@ -79,9 +76,7 @@ export default {
   methods: {
     completeRead () {
       this.$store.dispatch('completeRead', this.read.id)
-    },
-    async deleteRead () {
-      await this.$store.dispatch('deleteRead', this.read.id)
+      this.isCompleteState = true
     },
     addReview () {
       this.$emit('add-review', this.read.id)

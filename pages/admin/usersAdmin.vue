@@ -6,7 +6,7 @@
       @ok="Delete()"
     >
       <p>
-        Want To User this Book?
+        Want To User this User?
       </p>
     </b-modal>
     <b-modal

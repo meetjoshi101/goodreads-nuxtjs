@@ -23,25 +23,24 @@
 
 <script>
 import TheBookCard from '~/components/TheBookCard.vue'
-/* eslint-disable no-console */
 export default {
   components: { TheBookCard },
   layout: 'users',
   watchQuery: true,
   async asyncData ({ store, route, $router }) {
     await store.dispatch('fetchGenres')
+    const page = route.query.page || 1
+    const limit = route.query.limit || 9
+    const query = {
+      page,
+      limit
+    }
     if (route.query.search) {
-      await store.dispatch('fetchBooks', { search: route.query.search })
+      query.search = route.query.search
+      await store.dispatch('fetchBooks', query)
     } else {
-      const page = route.query.page || 1
-      const limit = route.query.limit || 9
-      const genre = route.params.genre || 1
-      const argsObj = {
-        page,
-        limit,
-        genre
-      }
-      await store.dispatch('fetchBookByGenre', argsObj)
+      query.genre = route.params.genre || 1
+      await store.dispatch('fetchBookByGenre', query)
     }
   },
   data () {
@@ -59,12 +58,26 @@ export default {
   methods: {
     next () {
       this.page++
-      this.$router.push(`?page=${this.page}&limit=${this.limit}`)
+      const query = {
+        page: this.page,
+        limit: this.limit
+      }
+      if (this.$route.query.search) {
+        query.search = this.$route.query.search
+      }
+      this.$router.push({ name: this.$route.name, query })
     },
     prev () {
       if (this.page > 1) {
         this.page--
-        this.$router.push(`?page=${this.page}&limit=${this.limit}`)
+        const query = {
+          page: this.page,
+          limit: this.limit
+        }
+        if (this.$route.query.search) {
+          query.search = this.$route.query.search
+        }
+        this.$router.push({ name: this.$route.name, query })
       }
     }
   }

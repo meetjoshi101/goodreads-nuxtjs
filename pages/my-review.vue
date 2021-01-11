@@ -57,7 +57,6 @@
 
 <script>
 import review from '~/components/user/review/review'
-/* eslint-disable no-console */
 export default {
   components: { review },
   middleware: ['authanticated'],
@@ -102,16 +101,15 @@ export default {
       let validate = false
       if (!this.comment) {
         this.commentState = false
-        validate = false
       } else {
         this.commentState = true
-        validate = true
       }
       if (!this.rating || this.rating > 5 || this.rating < 1) {
         this.ratingState = false
-        validate = false
       } else {
         this.ratingState = true
+      }
+      if (this.commentState && this.ratingState) {
         validate = true
       }
       return validate
