@@ -77,16 +77,12 @@ export default {
           token = res.token
           this.$store.commit('setAuth', token)
           Cookie.set('token', token)
-          if (this.$store.state.Auth.role == 'U') {
-            this.$router.replace('/')
-          } else {
-            this.$router.replace('/admin')
-          }
+          this.$router.replace('/')
         },
         (err) => {
           console.log(err.message)
           this.showAlert = true
-          // this.$router.push('/signup')
+          this.$router.push('/signup')
         }
       )
     }

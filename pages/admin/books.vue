@@ -109,7 +109,7 @@
           invalid-feedback="Average Rating is required"
         >
           <b-form-input
-            id="publicationYear-input"
+            id="avgRating-input"
             v-model="avgRating"
             :state="avgRatingState"
             type="number"
@@ -123,6 +123,15 @@
           drop-placeholder="Drop image here..."
           accept="image/*"
         />
+        <b-button size="md" :disabled="isUpload" variant="success" @click="uploadImage">
+          <div v-if="!isUpload">
+            Upload
+          </div>
+          <b-spinner v-if="isLoading" small />
+          <div v-if="isUploadedText">
+            Upload Completed
+          </div>
+        </b-button>
         <b-dropdown
           id="dropdown-1"
           :text="selectedGenre"
@@ -212,7 +221,11 @@ export default {
       limit
     }
     if (route.query.search) {
-      await store.dispatch('fetchBooks', { search: route.query.search, page, limit })
+      await store.dispatch('fetchBooks', {
+        search: route.query.search,
+        page,
+        limit
+      })
     } else {
       await store.dispatch('fetchBooks', { pageLimitArg: pageLimitObj })
     }
@@ -246,7 +259,10 @@ export default {
       selectedBook: null,
       s: this.$route.query.search ? this.$route.query.search : '',
       selectDeleteIsbn: null,
-      bookImage: ''
+      bookImage: null,
+      imageUrl: '',
+      isLoading: false,
+      disable: false
     }
   },
   computed: {
@@ -255,6 +271,32 @@ export default {
     },
     items () {
       return this.$store.getters.getBooks()
+    },
+    isUpload () {
+      if (!this.isEdit) {
+        if (this.isLoading || !this.bookImage || this.imageUrl) {
+          return true
+        } else {
+          return false
+        }
+      } else if (this.isLoading || this.bookImage == null || this.disable) {
+        return true
+      } else {
+        return false
+      }
+    },
+    isUploadedText () {
+      if (!this.isEdit) {
+        if (this.imageUrl) {
+          return true
+        } else {
+          return false
+        }
+      } else if (this.disable) {
+        return true
+      } else {
+        return false
+      }
     }
   },
   methods: {
@@ -268,7 +310,6 @@ export default {
     next () {
       this.page++
       let query
-      console.log(this.$route)
       if (this.$route.query.search) {
         query = {
           page: this.page,
@@ -328,10 +369,8 @@ export default {
         Title: this.title,
         Author: this.author,
         publication_Year: this.publicationYear,
-        Image_url:
-          'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg',
-        Image_URL_S:
-          'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg'
+        Image_url: this.imageUrl,
+        Image_URL_S: this.imageUrl
       }
       await this.$store.dispatch('editBook', bookObj)
       this.$bvModal.show('bookEdited')
@@ -372,10 +411,8 @@ export default {
         Title: this.title,
         Author: this.author,
         publication_Year: this.publicationYear,
-        Image_url:
-          'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg',
-        Image_URL_S:
-          'http://images.amazon.com/images/P/0596004613.01._PE30_PI_SCMZZZZZZZ_.jpg'
+        Image_url: this.imageUrl,
+        Image_URL_S: this.imageUrl
       }
       await this.$store.dispatch('addBook', bookObj)
       this.$bvModal.show('bookAdded')
@@ -414,7 +451,13 @@ export default {
         this.publicationYearState = true
       }
 
-      if (this.isbnState && this.titleState && this.authorState && this.publicationYearState) {
+      if (
+        this.isbnState &&
+        this.titleState &&
+        this.authorState &&
+        this.publicationYearState &&
+        this.imageUrl
+      ) {
         valid = true
       } else {
         valid = false
@@ -440,6 +483,8 @@ export default {
         this.avgRatingState = true
         this.selectedGenre = seletctedGenre.name
         this.selectedGenreId = seletctedGenre.id
+        this.imageUrl = this.selectedBook.Image_url
+        this.bookImage = null
       } else {
         this.isbn = ''
         this.isbnState = null
@@ -453,6 +498,8 @@ export default {
         this.avgRatingState = null
         this.selectedGenre = 'Art'
         this.selectedGenreId = 1
+        this.imageUrl = ''
+        this.bookImage = null
       }
     },
     handleOk (bvModalEvt) {
@@ -463,21 +510,15 @@ export default {
     },
     handleSubmit () {
       // Exit when the form isn't valid
-      // if (!this.checkFormValidity()) {
-      //   return
-      // }
-      // if (this.isEdit) {
-      //   this.editBook()
-      // } else {
-      //   this.addBook()
-      // }
-      const formData = new FormData()
-      formData.append('file', this.bookImage)
-      try {
-        this.$axios.$post('/upload', formData)
-      } catch (e) {
-        console.log(e)
+      if (!this.checkFormValidity()) {
+        return
       }
+      if (this.isEdit) {
+        this.editBook()
+      } else {
+        this.addBook()
+      }
+
       // Hide the modal manually
       this.$nextTick(() => {
         this.$bvModal.hide('modal-scrollable')
@@ -486,6 +527,22 @@ export default {
     selectGenre (id, name) {
       this.selectedGenre = name
       this.selectedGenreId = id
+    },
+    async uploadImage () {
+      this.isLoading = true
+      const formData = new FormData()
+      formData.append('file', this.bookImage)
+      await this.$axios.$post('/upload', formData).then(
+        (res) => {
+          this.imageUrl = res.url
+          this.isLoading = false
+          this.disable = true
+        },
+        (err) => {
+          console.log(err)
+          this.isLoading = false
+        }
+      )
     }
   }
 }

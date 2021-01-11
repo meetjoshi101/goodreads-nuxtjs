@@ -6,7 +6,7 @@ export default function (arg) {
   let query = ''
   arr.forEach((val, i) => {
     if (i === 0) {
-      query = '?' + Object.keys(val) + '=' + Object.values(val)
+      query = Object.keys(val) + '=' + Object.values(val)
     } else {
       query = query + '&' + Object.keys(val) + '=' + Object.values(val)
     }
