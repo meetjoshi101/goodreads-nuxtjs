@@ -117,7 +117,7 @@
           />
         </b-form-group>
         <div class="preview-image-container d-flex align-items-end">
-          <img v-if="imageUrl" :src="imageUrl" class="m-1">
+          <img v-if="imageUrl" :src="imageUrl" alt="Cover Image" class="m-1">
 
           <b-form-file
             v-model="bookImage"
